@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Directorio León GTO</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --pink-1:   #c2185b;
+  --pink-2:   #e91e8c;
+  --pink-3:   #ff4db2;
+  --pink-glow: rgba(233,30,140,0.35);
+  --red-btn-1: #c0392b;
+  --red-btn-2: #e74c3c;
+  --blue-btn:  #2980b9;
+  --dark-1:   #0d0d0d;
+  --dark-2:   #141414;
+  --dark-3:   #1c1c1c;
+  --dark-4:   #242424;
+  --dark-5:   #2e2e2e;
+  --surface:  #1a1a1a;
+  --border:   rgba(255,255,255,0.08);
+  --border-pk: rgba(233,30,140,0.30);
+  --text:     #f0e6ed;
+  --text-2:   #c9a8bd;
+  --muted:    #8a7080;
+  --shadow:   0 4px 24px rgba(0,0,0,0.45);
+  --shadow-pk: 0 6px 30px rgba(233,30,140,0.30);
+  --radius:   14px;
+  --radius-sm:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Nunito',sans-serif;background:var(--dark-1);min-height:100vh;color:var(--text);}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 15% 10%,rgba(233,30,140,0.10) 0%,transparent 55%),
+    radial-gradient(ellipse at 85% 90%,rgba(194,24,91,0.09) 0%,transparent 55%);
+}
+h1,h2,h3{font-family:'Playfair Display',serif;}
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* NAVBAR */
+#main-navbar{
+  display:none;position:sticky;top:0;z-index:150;
+  background:rgba(13,13,13,0.96);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border-pk);
+  box-shadow:0 2px 20px rgba(0,0,0,0.6);
+  padding:0.7rem 1.4rem;align-items:center;justify-content:space-between;gap:1rem;
+}
+.navbar-brand{
+  display:flex;align-items:center;gap:0.6rem;font-family:'Playfair Display',serif;
+  font-size:1.1rem;font-weight:700;color:var(--pink-3);text-decoration:none;cursor:pointer;
+}
+.navbar-right{display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;}
+.nav-email{font-size:0.80rem;color:var(--muted);max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.badge{font-size:0.68rem;font-weight:800;padding:0.2rem 0.6rem;border-radius:999px;letter-spacing:0.04em;text-transform:uppercase;}
+.badge-user{background:rgba(233,30,140,0.18);color:var(--pink-3);border:1px solid var(--border-pk);}
+.badge-visitor{background:rgba(255,255,255,0.06);color:var(--muted);border:1px solid var(--border);}
+
+/* BUTTONS */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:0.4rem;
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:0.92rem;
+  padding:0.65rem 1.2rem;border:none;border-radius:var(--radius-sm);
+  cursor:pointer;transition:transform 0.15s,filter 0.15s;text-decoration:none;white-space:nowrap;
+}
+.btn:hover{filter:brightness(1.1);transform:translateY(-1px);}
+.btn:active{transform:translateY(0);filter:brightness(0.95);}
+.btn:disabled{opacity:0.45;pointer-events:none;}
+.btn-pink  {background:linear-gradient(135deg,var(--pink-2),var(--pink-1));color:#fff;box-shadow:var(--shadow-pk);}
+.btn-green {background:linear-gradient(135deg,#27ae60,#1a7a4a);color:#fff;box-shadow:0 4px 14px rgba(39,174,96,0.35);}
+.btn-red   {background:linear-gradient(135deg,var(--red-btn-2),var(--red-btn-1));color:#fff;box-shadow:0 4px 14px rgba(231,76,60,0.35);}
+.btn-blue  {background:linear-gradient(135deg,#3498db,#2980b9);color:#fff;box-shadow:0 4px 14px rgba(52,152,219,0.30);}
+.btn-dark  {background:linear-gradient(135deg,#2a2a2a,#1a1a1a);color:var(--text-2);border:1px solid var(--border-pk);}
+.btn-wa    {background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;box-shadow:0 4px 14px rgba(37,211,102,0.30);}
+.btn-ghost {background:rgba(255,255,255,0.06);color:var(--text-2);border:1px solid var(--border);}
+.btn-orange{background:linear-gradient(135deg,#f39c12,#e67e22);color:#fff;}
+.btn-full{width:100%;}
+.btn-lg{padding:0.8rem 1.5rem;font-size:1rem;}
+.btn-sm{padding:0.38rem 0.82rem;font-size:0.8rem;}
+
+/* CARD */
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);}
+
+/* INPUTS */
+.form-group{display:flex;flex-direction:column;gap:0.35rem;}
+label.field-label{font-size:0.84rem;font-weight:700;color:var(--text-2);}
+label.field-label.req::after{content:' *';color:var(--pink-3);}
+.form-input,.form-textarea{
+  width:100%;padding:0.65rem 0.9rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  font-family:'Nunito',sans-serif;font-size:0.92rem;color:var(--text);background:var(--dark-4);outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--muted);}
+.form-input:focus,.form-textarea:focus{border-color:var(--pink-2);box-shadow:0 0 0 3px rgba(233,30,140,0.15);background:var(--dark-3);}
+.form-input:disabled{background:var(--dark-3);color:var(--muted);cursor:not-allowed;}
+.form-textarea{resize:vertical;min-height:90px;}
+.pass-wrap{position:relative;}
+.pass-wrap .form-input{padding-right:2.6rem;}
+.pass-eye{
+  position:absolute;right:0.7rem;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;color:var(--muted);display:flex;align-items:center;padding:0.2rem;
+  transition:color 0.15s;
+}
+.pass-eye:hover{color:var(--pink-3);}
+
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:0.75rem;color:var(--muted);font-size:0.78rem;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* PROFILE CARD */
+.profile-card{
+  background:var(--dark-3);border-radius:var(--radius);border:1px solid var(--border);
+  overflow:hidden;display:flex;flex-direction:column;
+  transition:transform 0.22s,box-shadow 0.22s,border-color 0.22s;
+}
+.profile-card:hover{transform:translateY(-5px);box-shadow:0 14px 40px rgba(0,0,0,0.55),0 0 0 1px var(--border-pk);border-color:var(--border-pk);}
+.profile-card .card-img{width:100%;height:210px;object-fit:cover;background:var(--dark-4);display:block;}
+.profile-card .card-body{padding:1rem;flex:1;}
+.profile-card .card-name{font-size:1.15rem;font-weight:900;color:var(--text);}
+.profile-card .card-loc{font-size:0.75rem;color:var(--pink-3);font-weight:700;text-transform:uppercase;letter-spacing:0.05em;}
+.profile-card .card-age{font-size:0.82rem;color:var(--muted);margin-top:0.1rem;}
+.profile-card .card-desc{font-size:0.86rem;color:var(--text-2);margin-top:0.5rem;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.profile-card .card-footer{padding:0.75rem 1rem;background:var(--dark-4);border-top:1px solid var(--border);display:flex;flex-direction:column;gap:0.5rem;}
+.profile-card .card-footer .row{display:flex;gap:0.5rem;}
+
+/* GRID */
+.profiles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.4rem;}
+
+/* IMAGE SLOTS */
+.main-img-preview{width:100%;height:210px;object-fit:cover;border-radius:var(--radius-sm);background:var(--dark-4);display:block;}
+.ref-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;}
+.ref-slot{
+  border:2px dashed var(--border);border-radius:var(--radius-sm);height:90px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;
+  transition:border-color 0.2s,background 0.15s;background:var(--dark-4);
+}
+.ref-slot:hover{border-color:var(--pink-2);background:rgba(233,30,140,0.06);}
+.slot-lbl{font-size:0.72rem;color:var(--muted);font-weight:700;display:flex;flex-direction:column;align-items:center;gap:0.3rem;}
+
+/* MODAL */
+#modal-overlay{
+  position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.72);
+  display:flex;align-items:center;justify-content:center;padding:1rem;
+  opacity:0;pointer-events:none;transition:opacity 0.22s;
+}
+#modal-overlay.show{opacity:1;pointer-events:all;}
+#modal-box{
+  background:var(--dark-3);border:1px solid var(--border-pk);border-radius:18px;
+  width:100%;max-width:400px;overflow:hidden;
+  box-shadow:0 30px 90px rgba(0,0,0,0.7),0 0 40px rgba(233,30,140,0.12);
+  transform:scale(0.88) translateY(10px);transition:transform 0.24s cubic-bezier(.34,1.56,.64,1);
+}
+#modal-overlay.show #modal-box{transform:scale(1) translateY(0);}
+#modal-bar{padding:1rem 1.2rem 0.9rem;display:flex;align-items:center;gap:0.6rem;font-weight:800;font-size:0.95rem;color:#fff;}
+#modal-msg{padding:1rem 1.4rem 0.8rem;font-size:0.92rem;color:var(--text-2);line-height:1.65;}
+#modal-footer-btns{padding:0.6rem 1.2rem 1.2rem;display:flex;gap:0.55rem;justify-content:flex-end;flex-wrap:wrap;}
+
+/* SPINNER */
+.spinner{width:40px;height:40px;border-radius:50%;border:4px solid var(--dark-5);border-top-color:var(--pink-2);animation:spin 0.8s linear infinite;margin:0 auto;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* DETAIL */
+.detail-grid{display:grid;grid-template-columns:1fr;}
+@media(min-width:768px){.detail-grid{grid-template-columns:1fr 1fr;}}
+.detail-img{width:100%;height:420px;object-fit:cover;display:block;}
+.detail-body{padding:1.75rem;display:flex;flex-direction:column;gap:1.1rem;background:var(--dark-3);}
+.detail-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--pink-2);font-weight:800;}
+.detail-value{font-weight:700;color:var(--text);font-size:1rem;margin-top:0.15rem;}
+.detail-name{font-size:2rem;font-family:'Playfair Display',serif;font-weight:700;font-style:italic;color:#fff;line-height:1.2;}
+.ref-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;}
+.ref-grid img{width:100%;height:100px;object-fit:cover;border-radius:8px;}
+
+/* AUTH SCREENS */
+.auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;position:relative;z-index:1;}
+.auth-card{
+  width:100%;max-width:380px;background:var(--dark-3);
+  border:1px solid var(--border-pk);border-radius:var(--radius);
+  box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 60px rgba(233,30,140,0.08);
+}
+.auth-card .inner{padding:2.2rem 2rem;}
+.auth-logo{
+  width:76px;height:76px;border-radius:22px;
+  background:linear-gradient(135deg,var(--pink-2),var(--pink-1));
+  display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;
+  box-shadow:0 8px 30px rgba(233,30,140,0.45);
+}
+.auth-title{text-align:center;margin-bottom:0.2rem;font-size:1.65rem;color:#fff;font-style:italic;}
+.auth-sub{text-align:center;font-size:0.83rem;color:var(--muted);margin-bottom:1.8rem;font-weight:600;letter-spacing:0.03em;}
+.auth-fields{display:flex;flex-direction:column;gap:1rem;}
+.link-btn{
+  background:none;border:none;cursor:pointer;color:var(--pink-3);font-size:0.82rem;font-weight:700;
+  text-decoration:underline;font-family:'Nunito',sans-serif;padding:0;transition:color 0.15s;
+}
+.link-btn:hover{color:#fff;}
+.back-btn{
+  display:inline-flex;align-items:center;gap:0.35rem;color:var(--pink-3);font-weight:800;font-size:0.9rem;
+  background:none;border:none;cursor:pointer;margin-bottom:1.1rem;padding:0;transition:color 0.15s;font-family:'Nunito',sans-serif;
+}
+.back-btn:hover{color:#fff;}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:0.75rem;}
+.page-title{font-size:1.75rem;color:#fff;font-style:italic;}
+.page-title span{color:var(--pink-3);}
+.state-box{text-align:center;padding:4rem 1rem;color:var(--muted);font-weight:700;}
+.state-box p{margin-top:0.75rem;font-size:0.95rem;}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="main-navbar">
+  <div class="navbar-brand" onclick="showScreen('screen-list')">
+    <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+      <rect width="30" height="30" rx="8" fill="url(#nbg)"/>
+      <text x="15" y="21" font-size="16" font-weight="bold" fill="white" text-anchor="middle" font-family="Georgia,serif">L</text>
+      <defs><linearGradient id="nbg" x1="0" y1="0" x2="30" y2="30"><stop offset="0%" stop-color="#e91e8c"/><stop offset="100%" stop-color="#c2185b"/></linearGradient></defs>
+    </svg>
+    León GTO
+  </div>
+  <div class="navbar-right">
+    <span class="nav-email" id="nav-email"></span>
+    <span id="nav-badge"></span>
+    <button id="nav-new-btn"    class="btn btn-pink btn-sm"  onclick="openNewProfile()" style="display:none">+ Nuevo Perfil</button>
+    <button id="nav-logout-btn" class="btn btn-red btn-sm"   onclick="handleLogout()"   style="display:none">Salir</button>
+    <button id="nav-login-btn"  class="btn btn-ghost btn-sm" onclick="showScreen('screen-login')" style="display:none">Iniciar Sesión</button>
+  </div>
+</nav>
+
+<!-- LOGIN -->
+<div id="screen-login" class="screen">
+  <div class="auth-screen">
+    <div class="auth-card">
+      <div class="inner">
+        <div class="auth-logo">
+          <svg width="46" height="46" viewBox="0 0 46 46" fill="none"><text x="23" y="33" font-size="28" font-weight="bold" fill="white" text-anchor="middle" font-family="Georgia,serif">L</text></svg>
+        </div>
+        <h1 class="auth-title">León GTO</h1>
+        <p class="auth-sub">Directorio de Perfiles</p>
+        <div class="auth-fields">
+          <div class="form-group">
+            <label class="field-label req">Correo Electrónico</label>
+            <input type="email" id="li-email" class="form-input" placeholder="correo@ejemplo.com">
+          </div>
+          <div class="form-group">
+            <label class="field-label req">Contraseña</label>
+            <div class="pass-wrap">
+              <input type="password" id="li-pass" class="form-input" placeholder="••••••••" onkeydown="if(event.key==='Enter') handleLogin()">
+              <button class="pass-eye" type="button" onclick="toggleEye('li-pass',this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div style="text-align:right;margin-top:-0.3rem">
+            <button class="link-btn" onclick="handleForgot()">¿Olvidé mi contraseña?</button>
+          </div>
+          <div style="display:flex;gap:0.6rem">
+            <button class="btn btn-green" style="flex:1" onclick="handleLogin()">Ingresar</button>
+            <button class="btn btn-blue"  style="flex:1" onclick="showScreen('screen-register')">Crear Cuenta</button>
+          </div>
+          <div class="divider">o continúa como</div>
+          <button class="btn btn-dark btn-full btn-lg" onclick="enterVisitor()">👁️ VISITANTE Solamente</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div id="screen-register" class="screen">
+  <div class="auth-screen">
+    <div class="auth-card">
+      <div class="inner">
+        <div class="auth-logo" style="width:58px;height:58px;border-radius:16px">
+          <svg width="34" height="34" viewBox="0 0 34 34" fill="none"><text x="17" y="25" font-size="20" font-weight="bold" fill="white" text-anchor="middle" font-family="Georgia,serif">L</text></svg>
+        </div>
+        <h2 class="auth-title" style="font-size:1.35rem">Crear Cuenta</h2>
+        <p class="auth-sub" style="margin-bottom:1.4rem">Registro de nuevo usuario</p>
+        <div class="auth-fields">
+          <div class="form-group">
+            <label class="field-label req">Correo Electrónico</label>
+            <input type="email" id="rg-email" class="form-input" placeholder="correo@ejemplo.com">
+          </div>
+          <div class="form-group">
+            <label class="field-label req">Contraseña</label>
+            <div class="pass-wrap">
+              <input type="password" id="rg-pass" class="form-input" placeholder="Mínimo 6 caracteres">
+              <button class="pass-eye" type="button" onclick="toggleEye('rg-pass',this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="field-label req">Confirmar Contraseña</label>
+            <div class="pass-wrap">
+              <input type="password" id="rg-confirm" class="form-input" placeholder="Repite tu contraseña" onkeydown="if(event.key==='Enter') handleRegister()">
+              <button class="pass-eye" type="button" onclick="toggleEye('rg-confirm',this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div style="display:flex;gap:0.6rem;margin-top:0.4rem">
+            <button class="btn btn-green" style="flex:1" onclick="handleRegister()">Guardar</button>
+            <button class="btn btn-red"   style="flex:1" onclick="showScreen('screen-login')">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIST -->
+<div id="screen-list" class="screen">
+  <div style="max-width:1100px;margin:0 auto;padding:1.5rem 1rem;position:relative;z-index:1">
+    <div class="page-header">
+      <h1 class="page-title">Directorio <span>León GTO</span></h1>
+    </div>
+    <div id="list-loading" class="state-box"><div class="spinner"></div><p>Cargando perfiles...</p></div>
+    <div id="list-empty" class="state-box" style="display:none">
+      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.2" style="margin:0 auto"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      <p id="list-empty-msg">No hay perfiles registrados aún.</p>
+    </div>
+    <div id="profiles-grid" class="profiles-grid" style="display:none"></div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div id="screen-form" class="screen">
+  <div style="max-width:800px;margin:0 auto;padding:1.5rem 1rem;position:relative;z-index:1">
+    <button class="back-btn" onclick="showScreen('screen-list')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      Volver al directorio
+    </button>
+    <div class="card" style="background:var(--dark-3);padding:1.75rem">
+      <h2 id="form-title" style="font-size:1.5rem;color:var(--pink-3);font-style:italic;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">
+        Crear Nuevo Perfil
+      </h2>
+      <div style="display:grid;grid-template-columns:1fr;gap:1.5rem">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+          <div class="form-group">
+            <label class="field-label req">Foto Principal</label>
+            <input type="file" accept="image/*" id="f-main-file" style="display:none" onchange="previewMain(this)">
+            <div onclick="document.getElementById('f-main-file').click()" style="cursor:pointer">
+              <img id="f-main-prev" class="main-img-preview" src="https://via.placeholder.com/400x300/1c1c1c/666666?text=📷" alt="Foto">
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" style="margin-top:0.4rem" onclick="document.getElementById('f-main-file').click()">Cambiar Foto</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.9rem">
+            <div class="form-group">
+              <label class="field-label req">Nombre / Pseudónimo</label>
+              <input type="text" id="f-name" class="form-input" placeholder="Nombre o alias">
+            </div>
+            <div class="form-group">
+              <label class="field-label">Edad</label>
+              <input type="number" id="f-age" class="form-input" min="18" max="99" placeholder="Ej. 25">
+            </div>
+            <div class="form-group">
+              <label class="field-label">Lugar</label>
+              <input type="text" value="León Gto" disabled class="form-input">
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="field-label">Fotos de Referencia (máximo 3)</label>
+          <div class="ref-slots">
+            <div class="ref-slot" onclick="document.getElementById('f-ref1').click()">
+              <input type="file" accept="image/*" id="f-ref1" style="display:none" onchange="previewRef(this,1)">
+              <img id="f-ref1-prev" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0" src="" alt="">
+              <div class="slot-lbl" id="f-ref1-lbl"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>Foto 1</div>
+            </div>
+            <div class="ref-slot" onclick="document.getElementById('f-ref2').click()">
+              <input type="file" accept="image/*" id="f-ref2" style="display:none" onchange="previewRef(this,2)">
+              <img id="f-ref2-prev" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0" src="" alt="">
+              <div class="slot-lbl" id="f-ref2-lbl"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>Foto 2</div>
+            </div>
+            <div class="ref-slot" onclick="document.getElementById('f-ref3').click()">
+              <input type="file" accept="image/*" id="f-ref3" style="display:none" onchange="previewRef(this,3)">
+              <img id="f-ref3-prev" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0" src="" alt="">
+              <div class="slot-lbl" id="f-ref3-lbl"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>Foto 3</div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="field-label req">Descripción</label>
+          <textarea id="f-desc" class="form-textarea" rows="3" placeholder="Describe el perfil..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="field-label req">Teléfono / WhatsApp</label>
+          <input type="tel" id="f-phone" class="form-input" placeholder="Ej. 4771234567">
+        </div>
+        <div style="display:flex;gap:0.75rem;padding-top:0.5rem">
+          <button class="btn btn-green btn-lg" style="flex:1" onclick="saveProfile()">GUARDAR</button>
+          <button class="btn btn-red   btn-lg" style="flex:1" onclick="showScreen('screen-list')">CANCELAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL -->
+<div id="screen-detail" class="screen">
+  <div style="max-width:900px;margin:0 auto;padding:1.5rem 1rem;position:relative;z-index:1">
+    <button class="back-btn" onclick="showScreen('screen-list')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      Volver al directorio
+    </button>
+    <div id="detail-content" style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border-pk);box-shadow:0 20px 60px rgba(0,0,0,0.6)"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay">
+  <div id="modal-box">
+    <div id="modal-bar"><span id="modal-icon"></span><span id="modal-title-text"></span></div>
+    <div id="modal-msg"></div>
+    <div id="modal-footer-btns"></div>
+  </div>
+</div>
+
+<script>
+/* =============================================================
+   CONFIGURACIÓN DE SUPABASE
+   ─────────────────────────────────────────────────────────────
+   AQUÍ VAN TUS CLAVES DE SUPABASE
+   Encuéntralas en: supabase.com → Tu Proyecto → Settings → API
+   ─────────────────────────────────────────────────────────────
+   SUPABASE_URL      = Project URL
+   SUPABASE_ANON_KEY = anon / public key
+============================================================= */
+const SUPABASE_URL      = 'AQUI_VA_TU_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'AQUI_VA_TU_SUPABASE_ANON_KEY';
+/* ============================================================= */
+
+let sb = null;
+try {
+  if (!SUPABASE_URL.startsWith('AQUI')) {
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+} catch(e) { console.warn('Supabase init error:',e); }
+
+let currentUser=null, isVisitor=false, profilesData=[], editingId=null;
+const $=id=>document.getElementById(id);
+const RX_EMAIL=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const SVG_EYE_OPEN=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+const SVG_EYE_SHUT=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+
+function toggleEye(id,btn){const el=$(id);const p=el.type==='password';el.type=p?'text':'password';btn.innerHTML=p?SVG_EYE_SHUT:SVG_EYE_OPEN;}
+
+const MC={
+  info:   {color:'linear-gradient(135deg,#2980b9,#1a5276)',icon:'ℹ️',label:'Información'},
+  success:{color:'linear-gradient(135deg,#27ae60,#1a7a4a)',icon:'✅',label:'Éxito'},
+  warning:{color:'linear-gradient(135deg,#f39c12,#d68910)',icon:'⚠️',label:'Advertencia'},
+  error:  {color:'linear-gradient(135deg,#e74c3c,#c0392b)',icon:'❌',label:'Error'},
+  confirm:{color:'linear-gradient(135deg,#e91e8c,#c2185b)',icon:'❓',label:'Confirmar acción'},
+};
+function modal(type,msg,btns){
+  const c=MC[type]||MC.info;
+  $('modal-bar').style.background=c.color;
+  $('modal-icon').textContent=c.icon+' ';
+  $('modal-title-text').textContent=c.label;
+  $('modal-msg').textContent=msg;
+  const f=$('modal-footer-btns');f.innerHTML='';
+  (btns||[{text:'Aceptar',cls:'btn-green',cb:closeModal}]).forEach(b=>{
+    const btn=document.createElement('button');
+    btn.textContent=b.text;btn.className=`btn ${b.cls||'btn-green'} btn-sm`;btn.onclick=b.cb;f.appendChild(btn);
+  });
+  $('modal-overlay').classList.add('show');
+}
+function closeModal(){$('modal-overlay').classList.remove('show');}
+$('modal-overlay').addEventListener('click',e=>{if(e.target===$('modal-overlay'))closeModal();});
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+  const isAuth=id==='screen-login'||id==='screen-register';
+  $('main-navbar').style.display=isAuth?'none':'flex';
+  if(id==='screen-list')loadProfiles();
+  window.scrollTo(0,0);
+}
+
+function updateNav(){
+  if(currentUser){
+    $('nav-email').textContent=currentUser.email;
+    $('nav-badge').innerHTML='<span class="badge badge-user">Usuario</span>';
+    $('nav-new-btn').style.display='inline-flex';
+    $('nav-logout-btn').style.display='inline-flex';
+    $('nav-login-btn').style.display='none';
+  } else {
+    $('nav-email').textContent='Modo Visitante';
+    $('nav-badge').innerHTML='<span class="badge badge-visitor">Visitante</span>';
+    $('nav-new-btn').style.display='none';
+    $('nav-logout-btn').style.display='none';
+    $('nav-login-btn').style.display='inline-flex';
+  }
+}
+
+async function handleLogin(){
+  const email=$('li-email').value.trim(),pass=$('li-pass').value;
+  if(!email||!pass){modal('warning','Ingresa tu correo y contraseña.');return;}
+  if(!RX_EMAIL.test(email)){modal('error','El formato del correo no es válido.');return;}
+  if(!sb){modal('error','Agrega tus claves de Supabase en el script.');return;}
+  modal('info','Iniciando sesión...');
+  try{
+    const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
+    closeModal();
+    if(error){
+      let m='Error al iniciar sesión.';
+      if(/invalid.*credentials|Invalid login/i.test(error.message))m='Correo o contraseña incorrectos.';
+      else if(/not.*confirm/i.test(error.message))m='Confirma tu correo antes de ingresar.';
+      modal('error',m);return;
+    }
+    currentUser=data.user;isVisitor=false;updateNav();showScreen('screen-list');
+  }catch(e){closeModal();modal('error','Error inesperado.');}
+}
+
+async function handleRegister(){
+  const email=$('rg-email').value.trim(),pass=$('rg-pass').value,confirm=$('rg-confirm').value;
+  if(!email||!pass||!confirm){modal('warning','Todos los campos son obligatorios.');return;}
+  if(!RX_EMAIL.test(email)){modal('error','El formato del correo no es válido.');return;}
+  if(pass.length<6){modal('error','La contraseña debe tener al menos 6 caracteres.');return;}
+  if(pass!==confirm){modal('error','Las contraseñas no coinciden.');return;}
+  if(!sb){modal('error','Agrega tus claves de Supabase en el script.');return;}
+  modal('info','Creando tu cuenta...');
+  try{
+    const{error}=await sb.auth.signUp({email,password:pass});
+    closeModal();
+    if(error){
+      let m='Error al crear la cuenta.';
+      if(/already.*registered|User already/i.test(error.message))m='Este correo ya está registrado.';
+      modal('error',m);return;
+    }
+    modal('success','¡Cuenta creada! Revisa tu correo para confirmar tu registro.',[
+      {text:'Ir al Login',cls:'btn-green',cb:()=>{closeModal();showScreen('screen-login');}}
+    ]);
+  }catch(e){closeModal();modal('error','Error inesperado.');}
+}
+
+async function handleForgot(){
+  const email=$('li-email').value.trim();
+  if(!email){modal('warning','Escribe tu correo arriba para recuperar tu contraseña.');return;}
+  if(!RX_EMAIL.test(email)){modal('error','Formato de correo inválido.');return;}
+  if(!sb){modal('error','Supabase no configurado.');return;}
+  try{
+    const{error}=await sb.auth.resetPasswordForEmail(email);
+    if(error){modal('error','No se pudo enviar el correo de recuperación.');return;}
+    modal('success',`Enlace de recuperación enviado a ${email}. Revisa tu bandeja o spam.`);
+  }catch(e){modal('error','Error al enviar el correo.');}
+}
+
+function enterVisitor(){currentUser=null;isVisitor=true;updateNav();showScreen('screen-list');}
+
+function handleLogout(){
+  modal('confirm','¿Deseas cerrar sesión?',[
+    {text:'Sí, salir',cls:'btn-red',cb:async()=>{
+      closeModal();if(sb)await sb.auth.signOut();
+      currentUser=null;isVisitor=false;showScreen('screen-login');
+    }},
+    {text:'Cancelar',cls:'btn-blue',cb:closeModal}
+  ]);
+}
+
+async function loadProfiles(){
+  const grid=$('profiles-grid'),loading=$('list-loading'),empty=$('list-empty');
+  grid.style.display='none';empty.style.display='none';loading.style.display='block';
+  if(!sb){
+    loading.style.display='none';empty.style.display='block';
+    $('list-empty-msg').textContent='Configura Supabase para ver los perfiles.';return;
+  }
+  try{
+    const{data,error}=await sb.from('profiles').select('*').order('created_at',{ascending:false});
+    loading.style.display='none';
+    if(error)throw error;
+    profilesData=data||[];
+    if(!profilesData.length){empty.style.display='block';$('list-empty-msg').textContent='No hay perfiles aún.';return;}
+    grid.innerHTML='';grid.style.display='grid';
+    profilesData.forEach(p=>grid.appendChild(buildCard(p)));
+  }catch(e){loading.style.display='none';empty.style.display='block';$('list-empty-msg').textContent='Error al cargar perfiles.';}
+}
+
+function buildCard(p){
+  const isOwner=currentUser&&currentUser.id===p.user_id;
+  const imgSrc=p.main_photo_url||'https://via.placeholder.com/400x300/1c1c1c/555?text=Sin+Foto';
+  const phone=(p.phone||'').replace(/\D/g,'');
+  const el=document.createElement('div');
+  el.className='profile-card';
+  el.innerHTML=`
+    <img class="card-img" src="${imgSrc}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/400x300/1c1c1c/555?text=Sin+Foto'">
+    <div class="card-body">
+      <div class="card-name">${p.name}</div>
+      <div class="card-loc">📍 ${p.location||'León Gto'}</div>
+      ${p.age?`<div class="card-age">${p.age} años</div>`:''}
+      <div class="card-desc">${p.description||''}</div>
+    </div>
+    <div class="card-footer">
+      <div class="row">
+        <button class="btn btn-pink btn-sm" style="flex:1" onclick="viewProfile('${p.id}')">Ver Perfil</button>
+        <a href="https://wa.me/${phone}" target="_blank" class="btn btn-wa btn-sm" style="flex:1;text-align:center">💬 WhatsApp</a>
+      </div>
+      ${isOwner?`<div class="row">
+        <button class="btn btn-orange btn-sm" style="flex:1" onclick="openEdit('${p.id}')">✏️ Editar</button>
+        <button class="btn btn-red btn-sm" style="flex:1" onclick="confirmDelete('${p.id}')">🗑️ Eliminar</button>
+      </div>`:''}
+    </div>`;
+  return el;
+}
+
+function viewProfile(id){
+  const p=profilesData.find(x=>x.id===id);if(!p)return;
+  const isOwner=currentUser&&currentUser.id===p.user_id;
+  const phone=(p.phone||'').replace(/\D/g,'');
+  const imgSrc=p.main_photo_url||'https://via.placeholder.com/400x300/1c1c1c/555?text=Sin+Foto';
+  const refs=[p.ref_photo_1_url,p.ref_photo_2_url,p.ref_photo_3_url].filter(Boolean);
+  const refsHtml=refs.length?refs.map(src=>`<img src="${src}" alt="ref" onerror="this.style.display='none'">`).join(''):'<span style="font-size:0.82rem;color:#555;grid-column:span 3">Sin fotos adicionales</span>';
+  $('detail-content').innerHTML=`
+    <div class="detail-grid">
+      <div><img class="detail-img" src="${imgSrc}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/400x300/1c1c1c/555?text=Sin+Foto'"></div>
+      <div class="detail-body">
+        <div><div class="detail-label">Perfil en León GTO</div><div class="detail-name">${p.name}</div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div><div class="detail-label">Edad</div><div class="detail-value">${p.age?p.age+' años':'—'}</div></div>
+          <div><div class="detail-label">Ubicación</div><div class="detail-value">${p.location||'León Gto'}</div></div>
+        </div>
+        <div><div class="detail-label">Descripción</div><div style="color:var(--text-2);line-height:1.65;font-size:0.93rem;margin-top:0.25rem">${p.description||''}</div></div>
+        <div><div class="detail-label">Contacto</div><a href="tel:${p.phone}" style="font-size:1.4rem;font-weight:900;color:var(--pink-3);text-decoration:none">${p.phone}</a></div>
+        <div><div class="detail-label" style="margin-bottom:0.6rem">Fotos de referencia</div><div class="ref-grid">${refsHtml}</div></div>
+        <div style="display:flex;flex-direction:column;gap:0.55rem;padding-top:0.5rem">
+          <a href="https://wa.me/${phone}" target="_blank" class="btn btn-wa btn-lg btn-full">💬 Contactar por WhatsApp</a>
+          ${isOwner?`<div style="display:flex;gap:0.5rem">
+            <button class="btn btn-orange btn-lg" style="flex:1" onclick="openEdit('${p.id}')">✏️ Editar</button>
+            <button class="btn btn-red btn-lg" style="flex:1" onclick="confirmDelete('${p.id}')">🗑️ Eliminar</button>
+          </div>`:''}
+        </div>
+      </div>
+    </div>`;
+  showScreen('screen-detail');
+}
+
+function openNewProfile(){
+  if(!currentUser){modal('warning','Debes iniciar sesión para crear un perfil.');return;}
+  editingId=null;$('form-title').textContent='Crear Nuevo Perfil';resetForm();showScreen('screen-form');
+}
+function openEdit(id){
+  const p=profilesData.find(x=>x.id===id);if(!p)return;
+  editingId=id;$('form-title').textContent='Editar Perfil';
+  $('f-name').value=p.name||'';$('f-age').value=p.age||'';
+  $('f-desc').value=p.description||'';$('f-phone').value=p.phone||'';
+  if(p.main_photo_url)$('f-main-prev').src=p.main_photo_url;
+  [1,2,3].forEach(n=>{
+    const url=p[`ref_photo_${n}_url`];
+    if(url){const img=$(`f-ref${n}-prev`);img.src=url;img.style.display='block';$(`f-ref${n}-lbl`).style.display='none';}
+  });
+  showScreen('screen-form');
+}
+
+async function saveProfile(){
+  if(!currentUser){modal('error','No tienes sesión activa.');return;}
+  const name=$('f-name').value.trim(),age=$('f-age').value,desc=$('f-desc').value.trim(),phone=$('f-phone').value.trim();
+  const mainFile=$('f-main-file').files[0];
+  if(!name||!desc||!phone){modal('warning','Completa Nombre, Descripción y Teléfono.');return;}
+  if(!editingId&&!mainFile){modal('warning','Selecciona una foto principal.');return;}
+  if(!sb){modal('error','Supabase no configurado.');return;}
+  modal('info','Guardando perfil...');
+  try{
+    const ex=editingId?profilesData.find(p=>p.id===editingId):null;
+    let mainUrl=ex?.main_photo_url||'',ref1Url=ex?.ref_photo_1_url||'',ref2Url=ex?.ref_photo_2_url||'',ref3Url=ex?.ref_photo_3_url||'';
+    if(mainFile)mainUrl=await uploadFile(mainFile,`main/${currentUser.id}`);
+    const r1=$('f-ref1').files[0];if(r1)ref1Url=await uploadFile(r1,`ref/${currentUser.id}`);
+    const r2=$('f-ref2').files[0];if(r2)ref2Url=await uploadFile(r2,`ref/${currentUser.id}`);
+    const r3=$('f-ref3').files[0];if(r3)ref3Url=await uploadFile(r3,`ref/${currentUser.id}`);
+    const row={user_id:currentUser.id,name,description:desc,phone,age:age?parseInt(age):null,location:'León Gto',
+      main_photo_url:mainUrl,ref_photo_1_url:ref1Url,ref_photo_2_url:ref2Url,ref_photo_3_url:ref3Url};
+    let err;
+    if(editingId){({error:err}=await sb.from('profiles').update(row).eq('id',editingId));}
+    else{({error:err}=await sb.from('profiles').insert([row]));}
+    closeModal();if(err)throw err;
+    modal('success',editingId?'Perfil actualizado.':'Perfil creado con éxito.',[
+      {text:'Ver Directorio',cls:'btn-green',cb:()=>{closeModal();showScreen('screen-list');}}
+    ]);
+    resetForm();
+  }catch(e){closeModal();modal('error',`Error: ${e.message||'Intenta de nuevo.'}`);}
+}
+
+async function uploadFile(file,folder){
+  const ext=file.name.split('.').pop();
+  const path=`${folder}/${Date.now()}_${Math.random().toString(36).slice(2,7)}.${ext}`;
+  const{error}=await sb.storage.from('profile-photos').upload(path,file,{upsert:true});
+  if(error)throw error;
+  const{data}=sb.storage.from('profile-photos').getPublicUrl(path);
+  return data.publicUrl;
+}
+
+function confirmDelete(id){
+  modal('confirm','¿Eliminar este perfil? Esta acción es permanente.',[
+    {text:'Sí, eliminar',cls:'btn-red',cb:()=>{closeModal();doDelete(id);}},
+    {text:'Cancelar',cls:'btn-blue',cb:closeModal}
+  ]);
+}
+async function doDelete(id){
+  if(!sb)return;
+  try{
+    const{error}=await sb.from('profiles').delete().eq('id',id);
+    if(error)throw error;
+    modal('success','Perfil eliminado.',[{text:'OK',cls:'btn-green',cb:()=>{closeModal();loadProfiles();}}]);
+  }catch(e){modal('error',`Error: ${e.message}`);}
+}
+
+function previewMain(input){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{$('f-main-prev').src=e.target.result;};r.readAsDataURL(f);}
+function previewRef(input,n){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const img=$(`f-ref${n}-prev`);img.src=e.target.result;img.style.display='block';$(`f-ref${n}-lbl`).style.display='none';};r.readAsDataURL(f);}
+function resetForm(){
+  ['f-name','f-age','f-desc','f-phone'].forEach(id=>$(id).value='');
+  $('f-main-file').value='';$('f-main-prev').src='https://via.placeholder.com/400x300/1c1c1c/666666?text=📷';
+  [1,2,3].forEach(n=>{$(`f-ref${n}`).value='';const img=$(`f-ref${n}-prev`);img.src='';img.style.display='none';$(`f-ref${n}-lbl`).style.display='flex';});
+  editingId=null;
+}
+
+async function init(){
+  if(sb){
+    try{
+      const{data:{session}}=await sb.auth.getSession();
+      if(session?.user){currentUser=session.user;isVisitor=false;updateNav();showScreen('screen-list');return;}
+    }catch(e){}
+  }
+  showScreen('screen-login');
+}
+window.onload=init;
+</script>
+</body>
+</html>
