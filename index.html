@@ -45,7 +45,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;}
 .screen{display:none;}
 .screen.active{display:block;}
 
-/* ── NEON GLASS BUTTONS — ALL TRANSLUCENT ── */
+/* ── NEON GLASS BUTTONS ── */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:0.4rem;
   font-family:'Nunito',sans-serif;font-weight:800;font-size:0.92rem;
@@ -63,7 +63,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;}
 .btn:active{transform:translateY(0) scale(0.97);filter:brightness(0.92);}
 .btn:disabled{opacity:0.4;pointer-events:none;}
 
-/* Pink/Magenta — translucent neon */
 .btn-pink{
   background:linear-gradient(135deg,rgba(255,92,200,0.22) 0%,rgba(233,30,140,0.38) 50%,rgba(194,24,91,0.45) 100%);
   color:#ffb3e0;border:1px solid rgba(255,92,200,0.50);
@@ -72,7 +71,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;}
 }
 .btn-pink:hover{box-shadow:0 0 32px rgba(233,30,140,0.65),0 6px 20px rgba(0,0,0,0.5);}
 
-/* Green — translucent neon */
 .btn-green{
   background:linear-gradient(135deg,rgba(74,222,128,0.18) 0%,rgba(34,197,94,0.32) 50%,rgba(21,128,61,0.42) 100%);
   color:#86efac;border:1px solid rgba(74,222,128,0.45);
@@ -81,7 +79,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;}
 }
 .btn-green:hover{box-shadow:0 0 30px rgba(34,197,94,0.55),0 6px 20px rgba(0,0,0,0.5);}
 
-/* Red — translucent neon */
 .btn-red{
   background:linear-gradient(135deg,rgba(248,113,113,0.18) 0%,rgba(239,68,68,0.32) 50%,rgba(185,28,28,0.42) 100%);
   color:#fca5a5;border:1px solid rgba(248,113,113,0.45);
@@ -90,7 +87,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;}
 }
 .btn-red:hover{box-shadow:0 0 30px rgba(239,68,68,0.55),0 6px 20px rgba(0,0,0,0.5);}
 
-/* Blue — translucent neon */
 .btn-blue{
   background:linear-gradient(135deg,rgba(96,165,250,0.18) 0%,rgba(59,130,246,0.32) 50%,rgba(29,78,216,0.42) 100%);
   color:#93c5fd;border:1px solid rgba(96,165,250,0.45);
@@ -99,7 +95,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;}
 }
 .btn-blue:hover{box-shadow:0 0 30px rgba(59,130,246,0.55),0 6px 20px rgba(0,0,0,0.5);}
 
-/* WhatsApp — translucent neon green */
 .btn-wa{
   background:linear-gradient(135deg,rgba(74,222,128,0.15) 0%,rgba(37,211,102,0.30) 50%,rgba(7,94,84,0.42) 100%);
   color:#6ee7b7;border:1px solid rgba(37,211,102,0.45);
@@ -108,7 +103,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;}
 }
 .btn-wa:hover{box-shadow:0 0 30px rgba(37,211,102,0.55),0 6px 20px rgba(0,0,0,0.5);}
 
-/* Orange — translucent neon */
 .btn-orange{
   background:linear-gradient(135deg,rgba(251,191,36,0.18) 0%,rgba(245,158,11,0.32) 50%,rgba(180,83,9,0.42) 100%);
   color:#fcd34d;border:1px solid rgba(251,191,36,0.45);
@@ -117,7 +111,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;}
 }
 .btn-orange:hover{box-shadow:0 0 30px rgba(245,158,11,0.55),0 6px 20px rgba(0,0,0,0.5);}
 
-/* Dark ghost */
 .btn-dark{
   background:rgba(255,255,255,0.04);color:var(--text-2);
   border:1px solid rgba(255,92,200,0.22);
@@ -125,7 +118,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;}
 }
 .btn-dark:hover{background:rgba(255,255,255,0.08);box-shadow:0 0 22px rgba(233,30,140,0.22),0 6px 18px rgba(0,0,0,0.5);}
 
-/* Visitor shimmer */
 .btn-visitor{
   background:linear-gradient(135deg,rgba(255,92,200,0.12) 0%,rgba(255,255,255,0.06) 40%,rgba(233,30,140,0.18) 100%);
   color:rgba(255,200,240,0.92);
@@ -163,22 +155,28 @@ h1,h2,h3{font-family:'Playfair Display',serif;}
 .btn-lg{padding:0.85rem 1.5rem;font-size:1rem;}
 .btn-sm{padding:0.38rem 0.82rem;font-size:0.8rem;}
 
-/* ── NAVBAR ── */
+/* ── NAVBAR ── FIX 1: título + botones en una sola fila, sin email de usuario */
 #main-navbar{
   display:none;position:sticky;top:0;z-index:150;
   background:rgba(8,8,8,0.92);backdrop-filter:blur(22px);
   border-bottom:1px solid var(--border-pk);
   box-shadow:0 2px 24px rgba(0,0,0,0.7),0 0 40px rgba(233,30,140,0.05);
-  padding:0.65rem 1.3rem;align-items:center;justify-content:space-between;gap:1rem;
-  flex-wrap:wrap;
+  padding:0.65rem 1.3rem;
+  align-items:center;
+  justify-content:space-between;
+  gap:0.75rem;
+  flex-wrap:nowrap;
 }
 .navbar-brand{
   display:flex;align-items:center;gap:0.6rem;font-family:'Playfair Display',serif;
   font-size:1.1rem;font-weight:700;color:var(--pink-4);text-decoration:none;cursor:pointer;
-  font-style:italic;
+  font-style:italic;flex-shrink:0;
 }
-.navbar-right{display:flex;align-items:center;gap:0.65rem;flex-wrap:wrap;}
-.nav-email{font-size:0.78rem;color:var(--muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* FIX 1: navbar-right sin margen auto, botones pegados a la derecha */
+.navbar-right{
+  display:flex;align-items:center;gap:0.65rem;
+  flex-shrink:0;
+}
 .badge{font-size:0.66rem;font-weight:800;padding:0.2rem 0.6rem;border-radius:999px;letter-spacing:0.04em;text-transform:uppercase;}
 .badge-user   {background:rgba(233,30,140,0.18);color:var(--pink-4);border:1px solid var(--border-pk);}
 .badge-visitor{background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid var(--border);}
@@ -228,7 +226,6 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
   border-color:var(--border-pk);
 }
 
-/* Card name — LEFT aligned */
 .card-name-label{
   font-size:0.72rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;
   color:#ffb3e0;font-family:'Nunito',sans-serif;display:block;
@@ -245,8 +242,6 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
 .profile-card .card-body{padding:1rem 1rem 0.75rem;flex:1;}
 .profile-card .card-loc{font-size:0.74rem;color:var(--pink-4);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;}
 .profile-card .card-age{font-size:0.82rem;color:var(--muted);margin-top:0.1rem;}
-
-/* Description — truncated to 2 lines */
 .profile-card .card-desc{
   font-size:0.95rem;color:var(--text-2);margin-top:0.5rem;line-height:1.6;
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
@@ -308,8 +303,19 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
 .detail-label{font-size:0.69rem;text-transform:uppercase;letter-spacing:0.09em;color:var(--pink-3);font-weight:800;}
 .detail-value{font-weight:700;color:var(--text);font-size:1rem;margin-top:0.15rem;}
 .detail-name{font-size:2rem;font-family:'Playfair Display',serif;font-weight:700;font-style:italic;color:#fff;line-height:1.2;}
-.detail-header-label{font-size:0.69rem;text-transform:uppercase;letter-spacing:0.09em;color:var(--pink-3);font-weight:800;text-align:center;}
-.detail-header-name{font-size:2rem;font-family:'Playfair Display',serif;font-weight:700;font-style:italic;color:#fff;line-height:1.2;text-align:center;}
+
+/* FIX 2: Nombre del perfil en detalle → alineado a la izquierda */
+.detail-header-label{
+  font-size:0.69rem;text-transform:uppercase;letter-spacing:0.09em;
+  color:var(--pink-3);font-weight:800;
+  text-align:left; /* ← antes era center */
+}
+.detail-header-name{
+  font-size:2rem;font-family:'Playfair Display',serif;font-weight:700;font-style:italic;
+  color:#fff;line-height:1.2;
+  text-align:left; /* ← antes era center */
+}
+
 .detail-desc{
   font-size:0.93rem;color:var(--text-2);line-height:1.72;
   margin-top:0.25rem;white-space:pre-wrap;word-break:break-word;
@@ -403,7 +409,7 @@ img.loaded{opacity:1;}
 </head>
 <body>
 
-<!-- NAVBAR -->
+<!-- NAVBAR — FIX 1: sin nav-email, botones junto al título a la derecha -->
 <nav id="main-navbar">
   <div class="navbar-brand" onclick="showScreen('screen-list')">
     <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
@@ -417,8 +423,8 @@ img.loaded{opacity:1;}
     </svg>
     León GTO
   </div>
-  <span class="nav-email" id="nav-email" style="margin-left:0.8rem;margin-right:auto"></span>
-  <div class="navbar-right" style="margin-left:0">
+  <!-- nav-email eliminado: ya no se muestra el usuario conectado -->
+  <div class="navbar-right">
     <button id="nav-new-btn"    class="btn btn-pink btn-sm"  onclick="openNewProfile()" style="display:none">+ New</button>
     <button id="nav-logout-btn" class="btn btn-red btn-sm"   onclick="handleLogout()"   style="display:none">Salir</button>
     <button id="nav-login-btn"  class="btn btn-ghost btn-sm" onclick="showScreen('screen-login')" style="display:none">Iniciar Sesión</button>
@@ -630,14 +636,22 @@ img.loaded{opacity:1;}
 <script>
 /* =============================================================
    CONFIGURACIÓN DE SUPABASE
+   FIX 3: sb se inicializa siempre con persistSession:true para
+   que init() recupere la sesión guardada en localStorage.
+   Al hacer login sin "mantener sesión", la sesión existirá
+   solo en memoria (se pierde al cerrar tab), y con la casilla
+   marcada se guarda en localStorage y persiste al recargar.
 ============================================================= */
 const SUPABASE_URL      = 'https://zvtfwavhfeqrnfzwrain.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2dGZ3YXZoZmVxcm5mendyYWluIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDc2MzY3MSwiZXhwIjoyMDkwMzM5NjcxfQ.wLBM9OOMmXGVC-2rI-JeO_58SAn_R0kGu2GZPCqyWmE';
 
+// FIX 3: sb siempre con persistSession:true para que getSession() en init() funcione
 let sb = null;
 try {
   if (!SUPABASE_URL.startsWith('AQUI')) {
-    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, storageKey: 'leon-gto-session' }
+    });
   }
 } catch(e) { console.warn('Supabase:', e); }
 
@@ -688,12 +702,8 @@ function toggleEye(id, btn) {
 }
 
 function styleRememberBox(cb) {
-  cb.style.background = cb.checked
-    ? 'var(--pink-3)'
-    : 'transparent';
-  cb.style.borderColor = cb.checked
-    ? 'var(--pink-3)'
-    : 'rgba(255,92,200,0.5)';
+  cb.style.background  = cb.checked ? 'var(--pink-3)' : 'transparent';
+  cb.style.borderColor = cb.checked ? 'var(--pink-3)' : 'rgba(255,92,200,0.5)';
 }
 
 /* ── Modal ── */
@@ -744,16 +754,14 @@ function showScreen(id) {
   window.scrollTo(0, 0);
 }
 
-/* ── Navbar ── */
+/* ── Navbar — FIX 1: sin mostrar email/usuario ── */
 function updateNav() {
   if (currentUser) {
-    const username = (currentUser.email || '').split('@')[0];
-    $('nav-email').textContent = username;
+    // FIX 1: nav-email eliminado, no se muestra nada del usuario
     $('nav-new-btn').style.display    = 'inline-flex';
     $('nav-logout-btn').style.display = 'inline-flex';
     $('nav-login-btn').style.display  = 'none';
   } else {
-    $('nav-email').textContent = 'Visitante';
     $('nav-new-btn').style.display    = 'none';
     $('nav-logout-btn').style.display = 'none';
     $('nav-login-btn').style.display  = 'inline-flex';
@@ -762,28 +770,45 @@ function updateNav() {
 
 /* ── Auth ── */
 async function handleLogin() {
-  const email = $('li-email').value.trim(), pass = $('li-pass').value;
+  const email   = $('li-email').value.trim();
+  const pass    = $('li-pass').value;
   const remember = $('li-remember') ? $('li-remember').checked : false;
-  if (!email || !pass)        { modal('warning','Ingresa tu correo y contraseña.'); return; }
-  if (!RX_EMAIL.test(email))  { modal('error','El formato del correo no es válido.'); return; }
-  if (!sb)                    { modal('error','Agrega tus claves de Supabase en el script.'); return; }
+
+  if (!email || !pass)       { modal('warning','Ingresa tu correo y contraseña.'); return; }
+  if (!RX_EMAIL.test(email)) { modal('error','El formato del correo no es válido.'); return; }
+  if (!sb)                   { modal('error','Agrega tus claves de Supabase en el script.'); return; }
+
   modal('info','Iniciando sesión...');
   try {
-    // Rebuild client with correct session persistence based on checkbox
-    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: { persistSession: remember, storageKey: 'leon-gto-session' }
-    });
-    const { data, error } = await client.auth.signInWithPassword({ email, password: pass });
+    /*
+     * FIX 3 — MANTENER SESIÓN
+     * sb ya se creó con persistSession:true al inicio.
+     * Si el usuario NO marcó "mantener sesión", eliminamos
+     * el token guardado en localStorage después de hacer login
+     * para que no persista al recargar.
+     * Si SÍ la marcó, el token queda en localStorage y
+     * init() lo recupera correctamente en la próxima visita.
+     */
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
     closeModal();
+
     if (error) {
       let m = 'Error al iniciar sesión.';
       if (/invalid.*credentials|Invalid login/i.test(error.message)) m = 'Correo o contraseña incorrectos.';
       else if (/not.*confirm/i.test(error.message)) m = 'Confirma tu correo antes de ingresar.';
       modal('error', m); return;
     }
-    // If "mantener sesión" checked, also store in sb global
-    if (remember) sb = client;
-    currentUser = data.user; isVisitor = false; updateNav(); showScreen('screen-list');
+
+    // Si NO quiere mantener sesión, borramos el token del storage
+    if (!remember) {
+      localStorage.removeItem('leon-gto-session');
+    }
+
+    currentUser = data.user;
+    isVisitor   = false;
+    updateNav();
+    showScreen('screen-list');
+
   } catch(e) { closeModal(); modal('error','Error inesperado.'); }
 }
 
@@ -805,7 +830,6 @@ async function handleRegister() {
       }
       modal('error', m); return;
     }
-    // Supabase returns identities:[] when email already exists (duplicate silently)
     if (data?.user && data.user.identities && data.user.identities.length === 0) {
       modal('error','Este correo ya está registrado. Intenta iniciar sesión.'); return;
     }
@@ -832,7 +856,10 @@ function enterVisitor() { currentUser = null; isVisitor = true; updateNav(); sho
 function handleLogout() {
   modal('confirm','¿Deseas cerrar sesión?',[
     {text:'Sí, salir',cls:'btn-red',cb:async()=>{
-      closeModal(); if (sb) await sb.auth.signOut();
+      closeModal();
+      if (sb) await sb.auth.signOut();
+      // FIX 3: también limpiamos el storage al cerrar sesión explícitamente
+      localStorage.removeItem('leon-gto-session');
       currentUser = null; isVisitor = false; showScreen('screen-login');
     }},
     {text:'Cancelar',cls:'btn-blue',cb:closeModal}
@@ -868,15 +895,12 @@ async function loadProfiles() {
   }
 }
 
-/* ── Build Card — NO admin overlay, name/label centered, desc truncated ── */
+/* ── Build Card ── */
 function buildCard(p) {
   const imgSrc  = p.main_photo_url || PLACEHOLDER;
   const phone   = (p.phone || '').replace(/\D/g,'');
-  const isOwner = currentUser && currentUser.id === p.user_id;
   const el      = document.createElement('div');
   el.className  = 'profile-card';
-
-  // Truncated description: show max 3 lines via CSS clamp
   const descSafe = (p.description || '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
   el.innerHTML = `
@@ -908,21 +932,9 @@ function viewProfile(id) {
   const imgSrc  = p.main_photo_url || PLACEHOLDER;
   const refs    = [p.ref_photo_1_url, p.ref_photo_2_url, p.ref_photo_3_url].filter(Boolean);
 
-  const refsHtml = refs.length
-    ? refs.map(src => `<img
-        src="${PLACEHOLDER}"
-        data-src="${src}"
-        alt="ref"
-        style="width:100%;height:105px;object-fit:cover;border-radius:9px;cursor:pointer;transition:transform 0.18s,box-shadow 0.18s;border:2px solid transparent;"
-        loading="lazy"
-        onclick="openLightbox('${src}')"
-        onmouseover="this.style.transform='scale(1.05)';this.style.boxShadow='0 0 0 2px #ff5cc8,0 6px 18px rgba(233,30,140,0.35)'"
-        onmouseout="this.style.transform='';this.style.boxShadow=''"
-        onerror="this.src='${PLACEHOLDER}'">`).join('')
-    : '<span style="font-size:0.82rem;color:#555;grid-column:span 3">Sin fotos adicionales</span>';
-
   const descEscaped = (p.description || '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
+  // FIX 2: detail-header-label y detail-header-name ya tienen text-align:left en el CSS
   $('detail-content').innerHTML = `
     <div style="background:linear-gradient(175deg,var(--dark-3) 0%,var(--dark-2) 100%);">
       <img
@@ -1116,6 +1128,8 @@ function resetForm() {
 async function init() {
   if (sb) {
     try {
+      // FIX 3: ahora sb tiene persistSession:true, así que getSession()
+      // recupera correctamente el token guardado si el usuario marcó "mantener sesión"
       const { data: { session } } = await sb.auth.getSession();
       if (session?.user) {
         currentUser = session.user; isVisitor = false; updateNav(); showScreen('screen-list'); return;
