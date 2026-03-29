@@ -177,7 +177,7 @@ h1,h2,h3{font-family:'Playfair Display',serif;}
   font-size:1.1rem;font-weight:700;color:var(--pink-4);text-decoration:none;cursor:pointer;
   font-style:italic;
 }
-.navbar-right{display:flex;align-items:center;gap:0.65rem;flex-wrap:wrap;margin-left:auto;}
+.navbar-right{display:flex;align-items:center;gap:0.65rem;flex-wrap:wrap;}
 .nav-email{font-size:0.78rem;color:var(--muted);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .badge{font-size:0.66rem;font-weight:800;padding:0.2rem 0.6rem;border-radius:999px;letter-spacing:0.04em;text-transform:uppercase;}
 .badge-user   {background:rgba(233,30,140,0.18);color:var(--pink-4);border:1px solid var(--border-pk);}
@@ -228,16 +228,15 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
   border-color:var(--border-pk);
 }
 
-/* Card name — CENTERED */
+/* Card name — LEFT aligned */
 .card-name-label{
   font-size:0.72rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;
   color:#ffb3e0;font-family:'Nunito',sans-serif;display:block;
-  text-align:center;
 }
 .card-name-value{
   font-size:1.35rem;font-family:'Playfair Display',serif;font-weight:700;font-style:italic;
   color:#ffffff;display:block;margin-top:0.05rem;margin-bottom:0.35rem;
-  line-height:1.2;text-align:center;
+  line-height:1.2;
 }
 
 .profile-card .card-img-wrap{position:relative;overflow:hidden;}
@@ -418,8 +417,8 @@ img.loaded{opacity:1;}
     </svg>
     León GTO
   </div>
-  <div class="navbar-right">
-    <span class="nav-email" id="nav-email"></span>
+  <span class="nav-email" id="nav-email" style="margin-left:0.8rem;margin-right:auto"></span>
+  <div class="navbar-right" style="margin-left:0">
     <button id="nav-new-btn"    class="btn btn-pink btn-sm"  onclick="openNewProfile()" style="display:none">+ Añadir</button>
     <button id="nav-logout-btn" class="btn btn-red btn-sm"   onclick="handleLogout()"   style="display:none">Salir</button>
     <button id="nav-login-btn"  class="btn btn-ghost btn-sm" onclick="showScreen('screen-login')" style="display:none">Iniciar Sesión</button>
@@ -431,8 +430,8 @@ img.loaded{opacity:1;}
   <div class="auth-screen">
     <div class="auth-card">
       <div class="inner">
-        <div class="auth-logo" style="width:100px;height:100px;border-radius:24px;padding:0;overflow:hidden;background:transparent;box-shadow:0 0 30px rgba(233,30,140,0.40),0 8px 24px rgba(0,0,0,0.5);border:1px solid rgba(255,92,200,0.35);">
-          <img src="logoperfilesapp.png" alt="Logo" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:24px;">
+        <div class="auth-logo" style="width:130px;height:130px;border-radius:28px;padding:0;overflow:hidden;background:transparent;box-shadow:0 0 36px rgba(233,30,140,0.45),0 10px 28px rgba(0,0,0,0.55);border:1px solid rgba(255,92,200,0.38);">
+          <img src="logoperfilesapp.png" alt="Logo" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:28px;">
         </div>
         <h1 class="auth-title">León GTO</h1>
         <p class="auth-sub">Directorio de Perfiles</p>
@@ -450,8 +449,16 @@ img.loaded{opacity:1;}
               </button>
             </div>
           </div>
-          <div style="text-align:right;margin-top:-0.3rem">
-            <button class="link-btn" onclick="handleForgot()">¿Olvidé mi contraseña?</button>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:-0.3rem;gap:0.5rem">
+            <button class="link-btn" onclick="handleForgot()" style="font-size:0.78rem;white-space:nowrap">Olvidé password</button>
+            <label style="display:flex;align-items:center;gap:0.35rem;cursor:pointer;white-space:nowrap">
+              <input type="checkbox" id="li-remember" style="
+                width:15px;height:15px;border-radius:4px;border:1.5px solid rgba(255,92,200,0.5);
+                background:transparent;cursor:pointer;appearance:none;-webkit-appearance:none;
+                transition:background 0.15s;flex-shrink:0;accent-color:var(--pink-3);
+              " onchange="styleRememberBox(this)">
+              <span style="font-size:0.78rem;color:var(--text-2);font-weight:700">Mantener sesión</span>
+            </label>
           </div>
           <div style="display:flex;gap:0.6rem">
             <button class="btn btn-green" style="flex:1" onclick="handleLogin()">Ingresar</button>
@@ -583,7 +590,7 @@ img.loaded{opacity:1;}
         </div>
         <div class="form-group">
           <label class="field-label req">Teléfono / WhatsApp</label>
-          <input type="tel" id="f-phone" class="form-input" placeholder="Ej. 4771234567">
+          <input type="tel" id="f-phone" class="form-input" placeholder="Ej. 4771234567" maxlength="16" inputmode="numeric" oninput="this.value=this.value.replace(/\D/g,'').slice(0,16)">
         </div>
         <div style="display:flex;gap:0.75rem;padding-top:0.5rem">
           <button class="btn btn-green btn-lg" style="flex:1" onclick="saveProfile()">GUARDAR</button>
@@ -680,6 +687,15 @@ function toggleEye(id, btn) {
   btn.innerHTML = p ? SVG_EYE_OFF : SVG_EYE_ON;
 }
 
+function styleRememberBox(cb) {
+  cb.style.background = cb.checked
+    ? 'var(--pink-3)'
+    : 'transparent';
+  cb.style.borderColor = cb.checked
+    ? 'var(--pink-3)'
+    : 'rgba(255,92,200,0.5)';
+}
+
 /* ── Modal ── */
 const MC = {
   info:   {color:'linear-gradient(135deg,rgba(37,99,235,0.65),rgba(30,64,175,0.75))',icon:'ℹ️',label:'Información'},
@@ -747,12 +763,17 @@ function updateNav() {
 /* ── Auth ── */
 async function handleLogin() {
   const email = $('li-email').value.trim(), pass = $('li-pass').value;
+  const remember = $('li-remember') ? $('li-remember').checked : false;
   if (!email || !pass)        { modal('warning','Ingresa tu correo y contraseña.'); return; }
   if (!RX_EMAIL.test(email))  { modal('error','El formato del correo no es válido.'); return; }
   if (!sb)                    { modal('error','Agrega tus claves de Supabase en el script.'); return; }
   modal('info','Iniciando sesión...');
   try {
-    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+    // Rebuild client with correct session persistence based on checkbox
+    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: remember, storageKey: 'leon-gto-session' }
+    });
+    const { data, error } = await client.auth.signInWithPassword({ email, password: pass });
     closeModal();
     if (error) {
       let m = 'Error al iniciar sesión.';
@@ -760,6 +781,8 @@ async function handleLogin() {
       else if (/not.*confirm/i.test(error.message)) m = 'Confirma tu correo antes de ingresar.';
       modal('error', m); return;
     }
+    // If "mantener sesión" checked, also store in sb global
+    if (remember) sb = client;
     currentUser = data.user; isVisitor = false; updateNav(); showScreen('screen-list');
   } catch(e) { closeModal(); modal('error','Error inesperado.'); }
 }
@@ -771,14 +794,20 @@ async function handleRegister() {
   if (pass.length < 6)         { modal('error','La contraseña debe tener al menos 6 caracteres.'); return; }
   if (pass !== confirm)        { modal('error','Las contraseñas no coinciden.'); return; }
   if (!sb)                     { modal('error','Agrega tus claves de Supabase.'); return; }
-  modal('info','Creando tu cuenta...');
+  modal('info','Verificando disponibilidad...');
   try {
-    const { error } = await sb.auth.signUp({ email, password: pass });
+    const { data, error } = await sb.auth.signUp({ email, password: pass });
     closeModal();
     if (error) {
       let m = 'Error al crear la cuenta.';
-      if (/already.*registered|User already/i.test(error.message)) m = 'Este correo ya está registrado.';
+      if (/already.*registered|User already|email.*taken|already.*use/i.test(error.message)) {
+        m = 'Este correo ya está registrado. Intenta iniciar sesión.';
+      }
       modal('error', m); return;
+    }
+    // Supabase returns identities:[] when email already exists (duplicate silently)
+    if (data?.user && data.user.identities && data.user.identities.length === 0) {
+      modal('error','Este correo ya está registrado. Intenta iniciar sesión.'); return;
     }
     modal('success','¡Cuenta creada! Revisa tu correo para confirmar el registro.',[
       {text:'Ir al Login',cls:'btn-green',cb:()=>{closeModal();showScreen('screen-login');}}
@@ -895,17 +924,26 @@ function viewProfile(id) {
   const descEscaped = (p.description || '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
   $('detail-content').innerHTML = `
-    <div class="detail-grid">
-      <div>
-        <img
-          src="${PLACEHOLDER}" data-src="${imgSrc}"
-          class="detail-img" alt="${p.name}" loading="lazy"
-          style="cursor:pointer"
-          onclick="openLightbox('${imgSrc}')"
-          onerror="this.src='${PLACEHOLDER}'">
-      </div>
-      <div class="detail-body">
-        <div style="text-align:center;margin-bottom:0.25rem">
+    <div style="background:linear-gradient(175deg,var(--dark-3) 0%,var(--dark-2) 100%);">
+      <img
+        src="${PLACEHOLDER}" data-src="${imgSrc}"
+        class="detail-img" alt="${p.name}" loading="lazy"
+        style="width:100%;height:420px;object-fit:cover;display:block;cursor:pointer"
+        onclick="openLightbox('${imgSrc}')"
+        onerror="this.src='${PLACEHOLDER}'">
+      ${refs.length ? `
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;padding:0.75rem 1rem 0">
+        ${refs.map(src => `<img
+          src="${PLACEHOLDER}" data-src="${src}" alt="ref"
+          style="width:100%;height:110px;object-fit:cover;border-radius:9px;cursor:pointer;transition:transform 0.18s,box-shadow 0.18s;border:2px solid transparent;"
+          loading="lazy"
+          onclick="openLightbox('${src}')"
+          onmouseover="this.style.transform='scale(1.04)';this.style.boxShadow='0 0 0 2px #ff5cc8,0 6px 18px rgba(233,30,140,0.35)'"
+          onmouseout="this.style.transform='';this.style.boxShadow=''"
+          onerror="this.src='${PLACEHOLDER}'">`).join('')}
+      </div>` : ''}
+      <div class="detail-body" style="border-radius:0">
+        <div>
           <div class="detail-header-label">Perfil en León GTO</div>
           <div class="detail-header-name">${p.name}</div>
         </div>
@@ -916,14 +954,6 @@ function viewProfile(id) {
         <div>
           <div class="detail-label">Descripción</div>
           <div class="detail-desc">${descEscaped}</div>
-        </div>
-        <div>
-          <div class="detail-label">Contacto</div>
-          <a href="tel:${p.phone}" class="detail-phone">${p.phone}</a>
-        </div>
-        <div>
-          <div class="detail-label" style="margin-bottom:0.6rem">Fotos de referencia</div>
-          <div class="ref-grid">${refsHtml}</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:0.55rem;padding-top:0.5rem">
           <a href="https://wa.me/${phone}" target="_blank" class="btn btn-wa btn-lg btn-full">💬 Contactar por WhatsApp</a>
@@ -981,6 +1011,8 @@ async function saveProfile() {
   const mainFile = $('f-main-file').files[0];
 
   if (!name || !desc || !phone) { modal('warning','Completa Nombre, Descripción y Teléfono.'); return; }
+  if (desc.length < 50)         { modal('warning','La descripción debe tener al menos 50 caracteres.'); return; }
+  if (!/^\d+$/.test(phone))     { modal('warning','El teléfono debe contener solo números.'); return; }
   if (!editingId && !mainFile)  { modal('warning','Selecciona una foto principal.'); return; }
   if (!sb)                      { modal('error','Supabase no configurado.'); return; }
 
