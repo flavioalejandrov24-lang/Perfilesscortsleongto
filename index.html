@@ -106,6 +106,36 @@ h1,h2,h3{font-family:'Playfair Display',serif;}
   box-shadow:0 0 12px rgba(233,30,140,0.12),0 4px 14px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.07);
 }
 .btn-dark:hover{background:rgba(255,255,255,0.09);box-shadow:0 0 22px rgba(233,30,140,0.22),0 6px 18px rgba(0,0,0,0.5);}
+
+/* Visitor button — glass mirror shimmer */
+.btn-visitor{
+  background:linear-gradient(135deg,rgba(255,92,200,0.12) 0%,rgba(255,255,255,0.06) 40%,rgba(233,30,140,0.18) 100%);
+  color:rgba(255,200,240,0.92);
+  border:1px solid rgba(255,120,210,0.30);
+  letter-spacing:0.08em;font-size:0.88rem;
+  box-shadow:0 0 14px rgba(233,30,140,0.18),0 4px 14px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.22);
+  overflow:hidden;
+}
+.btn-visitor::after{
+  content:'';position:absolute;
+  top:-60%;left:-75%;
+  width:55%;height:220%;
+  background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,0.22) 50%,transparent 70%);
+  transform:skewX(-18deg);
+  animation:btn-shimmer 3.2s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes btn-shimmer{
+  0%  { left:-75%; opacity:0; }
+  10% { opacity:1; }
+  45% { left:130%; opacity:1; }
+  55% { left:130%; opacity:0; }
+  100%{ left:130%; opacity:0; }
+}
+.btn-visitor:hover{
+  background:linear-gradient(135deg,rgba(255,92,200,0.22) 0%,rgba(255,255,255,0.10) 40%,rgba(233,30,140,0.28) 100%);
+  box-shadow:0 0 24px rgba(233,30,140,0.32),0 6px 20px rgba(0,0,0,0.5);
+}
 .btn-ghost{
   background:rgba(255,255,255,0.04);color:var(--text-2);
   border:1px solid rgba(255,255,255,0.12);
@@ -430,7 +460,7 @@ img.loaded{opacity:1;}
             <button class="btn btn-blue"  style="flex:1" onclick="showScreen('screen-register')">Crear Cuenta</button>
           </div>
           <div class="divider">o continúa como</div>
-          <button class="btn btn-dark btn-full btn-lg" onclick="enterVisitor()">👁️ VISITANTE Solamente</button>
+          <button class="btn btn-visitor btn-full btn-lg" onclick="enterVisitor()">VISITANTE SOLAMENTE</button>
         </div>
       </div>
     </div>
@@ -596,8 +626,8 @@ img.loaded{opacity:1;}
 /* =============================================================
    CONFIGURACIÓN DE SUPABASE
 ============================================================= */
-const SUPABASE_URL      = 'https://nfmatyeqxzarzhxaicur.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mbWF0eWVxeHphcnpoeGFpY3VyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5ODM3NjMsImV4cCI6MjA4OTU1OTc2M30.maGY5r1UxVuSf7TF80qSkANIS76d4ppYNmiG2uAMbeI';
+const SUPABASE_URL      = 'https://zvtfwavhfeqrnfzwrain.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2dGZ3YXZoZmVxcm5mendyYWluIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDc2MzY3MSwiZXhwIjoyMDkwMzM5NjcxfQ.wLBM9OOMmXGVC-2rI-JeO_58SAn_R0kGu2GZPCqyWmE';
 
 let sb = null;
 try {
