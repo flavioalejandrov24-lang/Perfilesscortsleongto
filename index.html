@@ -155,24 +155,27 @@ h1,h2,h3{font-family:'Playfair Display',serif;}
 .btn-lg{padding:0.85rem 1.5rem;font-size:1rem;}
 .btn-sm{padding:0.38rem 0.82rem;font-size:0.8rem;}
 
-/* ── CAMBIO 1: Contenedor del botón visitante con manita animada ── */
+/* ── FIX 1: Manita al lado DERECHO del botón visitante ── */
 .visitor-wrapper{
   position:relative;
   display:flex;
   align-items:center;
   gap:0.6rem;
+  justify-content:center;
 }
 .visitor-hand{
   font-size:1.6rem;
   display:inline-block;
+  /* Ahora apunta a la izquierda (👈) y rebota hacia la derecha → izquierda */
   animation:hand-bounce 0.7s ease-in-out infinite alternate;
   filter:drop-shadow(0 0 8px rgba(255,92,200,0.7));
   flex-shrink:0;
   line-height:1;
+  /* La manita queda a la DERECHA, así que la animación la acerca al botón */
 }
 @keyframes hand-bounce{
-  0%  { transform:translateX(0)   scale(1);   }
-  100%{ transform:translateX(8px) scale(1.15); }
+  0%  { transform:translateX(0)    scale(1);   }
+  100%{ transform:translateX(-8px) scale(1.15); }
 }
 
 /* ── NAVBAR ── */
@@ -215,7 +218,6 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
 .form-input:focus,.form-textarea:focus{
   border-color:var(--pink-3);box-shadow:0 0 0 3px rgba(233,30,140,0.18);background:var(--dark-3);
 }
-/* CAMBIO 4: campo lugar habilitado pero con estilo visual diferenciado */
 .form-input:disabled{background:var(--dark-3);color:var(--muted);cursor:not-allowed;}
 .form-textarea{resize:vertical;min-height:90px;}
 .pass-wrap{position:relative;}
@@ -230,6 +232,47 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
 /* ── DIVIDER ── */
 .divider{display:flex;align-items:center;gap:0.75rem;color:var(--muted);font-size:0.78rem;}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── FIX 3: Insignia de Perfil Verificado ── */
+.verified-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:0.25rem;
+  background:rgba(34,197,94,0.15);
+  border:1px solid rgba(74,222,128,0.35);
+  border-radius:999px;
+  padding:0.18rem 0.55rem;
+  font-size:0.68rem;
+  font-weight:800;
+  color:#86efac;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+  backdrop-filter:blur(6px);
+  box-shadow:0 0 10px rgba(34,197,94,0.20);
+  vertical-align:middle;
+  margin-left:0.5rem;
+  flex-shrink:0;
+}
+.verified-badge svg{
+  width:11px;height:11px;
+  color:#4ade80;
+  filter:drop-shadow(0 0 4px rgba(74,222,128,0.6));
+}
+/* Nombre + badge en la tarjeta */
+.card-name-row{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:0.1rem;
+  margin-bottom:0.35rem;
+}
+/* Nombre + badge en el detalle */
+.detail-name-row{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:0.25rem;
+}
 
 /* ── PROFILE CARD ── */
 .profile-card{
@@ -252,11 +295,10 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
 }
 .card-name-value{
   font-size:1.35rem;font-family:'Playfair Display',serif;font-weight:700;font-style:italic;
-  color:#ffffff;display:block;margin-top:0.05rem;margin-bottom:0.35rem;
+  color:#ffffff;
   line-height:1.2;
 }
 
-/* CAMBIO 2: card-img-wrap clickeable */
 .profile-card .card-img-wrap{position:relative;overflow:hidden;cursor:pointer;}
 .profile-card .card-img{width:100%;height:270px;object-fit:cover;background:var(--dark-4);display:block;transition:transform 0.3s ease;}
 .profile-card:hover .card-img{transform:scale(1.02);}
@@ -360,17 +402,17 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
   box-shadow:0 0 0 2px var(--pink-4),0 6px 18px rgba(233,30,140,0.35);
 }
 
-/* ── LIGHTBOX con navegación (CAMBIO 3) ── */
+/* ── FIX 2: LIGHTBOX con botones nav en los BORDES reales ── */
 #lightbox{
   position:fixed;inset:0;z-index:99999;
   background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);
   display:flex;align-items:center;justify-content:center;
   opacity:0;pointer-events:none;transition:opacity 0.22s;
-  padding:1rem;
+  padding:0;  /* sin padding para que los botones lleguen al borde */
 }
 #lightbox.show{opacity:1;pointer-events:all;}
 #lightbox-img{
-  max-width:82vw;max-height:85vh;border-radius:12px;
+  max-width:76vw;max-height:85vh;border-radius:12px;
   box-shadow:0 20px 80px rgba(0,0,0,0.9),0 0 60px rgba(233,30,140,0.15);
   transform:scale(0.88);transition:transform 0.26s cubic-bezier(.34,1.46,.64,1);
   object-fit:contain;
@@ -389,23 +431,40 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
 }
 #lightbox-close:hover{background:rgba(233,30,140,0.55);transform:scale(1.1);}
 
-/* Botones prev/next del lightbox */
+/* FIX 2: Botones prev/next pegados a los BORDES laterales de la pantalla */
 .lb-nav{
-  position:fixed;top:50%;transform:translateY(-50%);
-  width:48px;height:48px;border-radius:50%;
-  background:rgba(233,30,140,0.30);backdrop-filter:blur(8px);
-  border:1px solid rgba(255,92,200,0.38);
-  color:#ffb3e0;font-size:1.4rem;font-weight:700;
+  position:fixed;
+  top:50%;
+  transform:translateY(-50%);
+  width:48px;height:56px;
+  border-radius:0 10px 10px 0; /* borde redondeado solo al interior */
+  background:rgba(233,30,140,0.28);
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,92,200,0.35);
+  color:#ffb3e0;font-size:1.6rem;font-weight:700;
   display:flex;align-items:center;justify-content:center;cursor:pointer;
-  box-shadow:0 0 18px rgba(233,30,140,0.30);
+  box-shadow:0 0 18px rgba(233,30,140,0.25);
   transition:background 0.15s,transform 0.15s;
   z-index:100001;
   user-select:none;
+  line-height:1;
 }
-.lb-nav:hover{background:rgba(233,30,140,0.55);transform:translateY(-50%) scale(1.1);}
+.lb-nav:hover{background:rgba(233,30,140,0.55);}
 .lb-nav.hidden{opacity:0;pointer-events:none;}
-#lb-prev{left:1rem;}
-#lb-next{right:4.5rem;}
+
+/* Prev: pegado al borde IZQUIERDO */
+#lb-prev{
+  left:0;
+  border-radius:0 10px 10px 0;
+}
+#lb-prev:hover{transform:translateY(-50%) translateX(3px);}
+
+/* Next: pegado al borde DERECHO */
+#lb-next{
+  right:0;
+  border-radius:10px 0 0 10px;
+}
+#lb-next:hover{transform:translateY(-50%) translateX(-3px);}
 
 /* ── AUTH ── */
 .auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;position:relative;z-index:1;}
@@ -465,7 +524,7 @@ img.loaded{opacity:1;}
   <div class="navbar-right">
     <button id="nav-new-btn"    class="btn btn-pink btn-sm"  onclick="openNewProfile()" style="display:none">+ New</button>
     <button id="nav-logout-btn" class="btn btn-red btn-sm"   onclick="handleLogout()"   style="display:none">Salir</button>
-    <button id="nav-login-btn"  class="btn btn-ghost btn-sm" onclick="showScreen('screen-login')" style="display:none">Iniciar Sesión</button>
+    <button id="nav-login-btn"  class="btn btn-ghost btn-sm" onclick="navigate('screen-login')" style="display:none">Iniciar Sesión</button>
   </div>
 </nav>
 
@@ -506,13 +565,13 @@ img.loaded{opacity:1;}
           </div>
           <div style="display:flex;gap:0.6rem">
             <button class="btn btn-green" style="flex:1" onclick="handleLogin()">Ingresar</button>
-            <button class="btn btn-blue"  style="flex:1" onclick="showScreen('screen-register')">Crear Cuenta</button>
+            <button class="btn btn-blue"  style="flex:1" onclick="navigate('screen-register')">Crear Cuenta</button>
           </div>
           <div class="divider">o continúa como</div>
-          <!-- CAMBIO 1: manita animada apuntando al botón visitante -->
+          <!-- FIX 1: Manita 👈 al lado DERECHO, apuntando hacia el botón -->
           <div class="visitor-wrapper">
-            <span class="visitor-hand">👈</span>
             <button class="btn btn-visitor btn-full btn-lg" onclick="enterVisitor()" style="flex:1">VISITANTE SOLAMENTE</button>
+            <span class="visitor-hand">👈</span>
           </div>
         </div>
       </div>
@@ -555,7 +614,7 @@ img.loaded{opacity:1;}
           </div>
           <div style="display:flex;gap:0.6rem;margin-top:0.4rem">
             <button class="btn btn-green" style="flex:1" onclick="handleRegister()">Guardar</button>
-            <button class="btn btn-red"   style="flex:1" onclick="showScreen('screen-login')">Cancelar</button>
+            <button class="btn btn-red"   style="flex:1" onclick="navigate('screen-login')">Cancelar</button>
           </div>
         </div>
       </div>
@@ -581,7 +640,7 @@ img.loaded{opacity:1;}
 <!-- ── FORM ── -->
 <div id="screen-form" class="screen">
   <div style="max-width:800px;margin:0 auto;padding:1.5rem 1rem;position:relative;z-index:1">
-    <button class="back-btn" onclick="showScreen('screen-list')">
+    <button class="back-btn" onclick="navigate('screen-list')">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       Volver al directorio
     </button>
@@ -606,7 +665,6 @@ img.loaded{opacity:1;}
               <label class="field-label">Edad</label>
               <input type="number" id="f-age" class="form-input" min="18" max="99" placeholder="Ej. 25">
             </div>
-            <!-- CAMBIO 4: campo lugar habilitado, con placeholder, valor default León Gto -->
             <div class="form-group">
               <label class="field-label">Lugar</label>
               <input type="text" id="f-location" value="León Gto" class="form-input" placeholder="Ej. León Gto">
@@ -643,7 +701,7 @@ img.loaded{opacity:1;}
         </div>
         <div style="display:flex;gap:0.75rem;padding-top:0.5rem">
           <button class="btn btn-green btn-lg" style="flex:1" onclick="saveProfile()">GUARDAR</button>
-          <button class="btn btn-red   btn-lg" style="flex:1" onclick="showScreen('screen-list')">CANCELAR</button>
+          <button class="btn btn-red   btn-lg" style="flex:1" onclick="navigate('screen-list')">CANCELAR</button>
         </div>
       </div>
     </div>
@@ -653,7 +711,7 @@ img.loaded{opacity:1;}
 <!-- ── DETAIL ── -->
 <div id="screen-detail" class="screen">
   <div style="max-width:900px;margin:0 auto;padding:1.5rem 1rem;position:relative;z-index:1">
-    <button class="back-btn" onclick="showScreen('screen-list')">
+    <button class="back-btn" onclick="navigate('screen-list')">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       Volver al directorio
     </button>
@@ -670,13 +728,12 @@ img.loaded{opacity:1;}
   </div>
 </div>
 
-<!-- ── LIGHTBOX con navegación (CAMBIO 3) ── -->
+<!-- ── LIGHTBOX con navegación (FIX 2) ── -->
 <div id="lightbox" onclick="closeLightbox()">
   <button id="lightbox-close" onclick="closeLightbox()">✕</button>
-  <!-- Botón anterior -->
+  <!-- FIX 2: botones pegados a los bordes laterales -->
   <button id="lb-prev" class="lb-nav" onclick="event.stopPropagation();lbNavigate(-1)">&#8249;</button>
   <img id="lightbox-img" src="" alt="Foto ampliada" onclick="event.stopPropagation()">
-  <!-- Botón siguiente -->
   <button id="lb-next" class="lb-nav" onclick="event.stopPropagation();lbNavigate(1)">&#8250;</button>
 </div>
 
@@ -772,12 +829,11 @@ function modal(type, msg, btns) {
 function closeModal() { $('modal-overlay').classList.remove('show'); }
 $('modal-overlay').addEventListener('click', e => { if (e.target === $('modal-overlay')) closeModal(); });
 
-/* ── LIGHTBOX con navegación entre fotos (CAMBIO 3) ── */
-let lbPhotos = [];   // array de URLs de fotos del perfil actual
-let lbIndex  = 0;    // índice de la foto actualmente visible
+/* ── LIGHTBOX con navegación ── */
+let lbPhotos = [];
+let lbIndex  = 0;
 
 function openLightbox(src, photosArr) {
-  // photosArr: array opcional con todas las fotos del perfil
   lbPhotos = photosArr || [src];
   lbIndex  = lbPhotos.indexOf(src);
   if (lbIndex < 0) lbIndex = 0;
@@ -787,7 +843,6 @@ function openLightbox(src, photosArr) {
 
 function _lbShow() {
   $('lightbox-img').src = lbPhotos[lbIndex];
-  // Mostrar/ocultar flechas según si hay más de 1 foto
   const prev = $('lb-prev');
   const next = $('lb-next');
   if (lbPhotos.length <= 1) {
@@ -804,7 +859,6 @@ function lbNavigate(dir) {
   const newIdx = lbIndex + dir;
   if (newIdx < 0 || newIdx >= lbPhotos.length) return;
   lbIndex = newIdx;
-  // Animación suave al cambiar foto
   const img = $('lightbox-img');
   img.style.opacity = '0';
   img.style.transform = 'scale(0.92)';
@@ -812,7 +866,6 @@ function lbNavigate(dir) {
     img.src = lbPhotos[lbIndex];
     img.style.opacity = '1';
     img.style.transform = 'scale(1)';
-    // Actualizar estado de botones
     $('lb-prev').classList.toggle('hidden', lbIndex === 0);
     $('lb-next').classList.toggle('hidden', lbIndex === lbPhotos.length - 1);
   }, 140);
@@ -828,7 +881,6 @@ function closeLightbox() {
   }, 300);
 }
 
-// Soporte teclado: ESC cierra, flechas navegan
 document.addEventListener('keydown', e => {
   if (!$('lightbox').classList.contains('show')) return;
   if (e.key === 'Escape')     closeLightbox();
@@ -836,21 +888,94 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') lbNavigate(1);
 });
 
-// Transición suave en la imagen del lightbox
 document.addEventListener('DOMContentLoaded', () => {
   const img = $('lightbox-img');
   if (img) img.style.transition = 'opacity 0.14s ease, transform 0.26s cubic-bezier(.34,1.46,.64,1)';
 });
 
-/* ── Navigation ── */
-function showScreen(id) {
+/* ============================================================
+   FIX 4 + FIX 5: SISTEMA DE NAVEGACIÓN CON HISTORY API
+   - Sincroniza el botón Atrás del dispositivo Android
+   - Mantiene la sesión correctamente (no redirige al login innecesariamente)
+============================================================ */
+
+// Mapa de pantallas con sus "niveles" de profundidad
+const SCREEN_DEPTH = {
+  'screen-login':    0,
+  'screen-register': 1,
+  'screen-list':     1,
+  'screen-form':     2,
+  'screen-detail':   2,
+};
+
+let currentScreen = null;
+let _ignorePopstate = false;
+
+/**
+ * navigate(screenId)
+ * Usa pushState para añadir cada pantalla al historial del navegador.
+ * El botón Atrás del Android hará popstate y nosotros decidimos a dónde ir.
+ */
+function navigate(screenId, replace = false) {
+  if (currentScreen === screenId) return;
+  currentScreen = screenId;
+
+  // Actualizar historial del navegador
+  const state = { screen: screenId };
+  if (replace) {
+    history.replaceState(state, '', '#' + screenId);
+  } else {
+    history.pushState(state, '', '#' + screenId);
+  }
+
+  _applyScreen(screenId);
+}
+
+function _applyScreen(screenId) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  $(id).classList.add('active');
-  const isAuth = id === 'screen-login' || id === 'screen-register';
+  $(screenId).classList.add('active');
+
+  const isAuth = screenId === 'screen-login' || screenId === 'screen-register';
   $('main-navbar').style.display = isAuth ? 'none' : 'flex';
-  if (id === 'screen-list') loadProfiles();
+
+  if (screenId === 'screen-list') loadProfiles();
   window.scrollTo(0, 0);
 }
+
+// Mantener compatibilidad con llamadas a showScreen() existentes
+function showScreen(id) { navigate(id); }
+
+// FIX 5: Escuchar el botón Atrás del dispositivo Android / navegador
+window.addEventListener('popstate', (e) => {
+  if (_ignorePopstate) { _ignorePopstate = false; return; }
+
+  // Si hay lightbox abierto, cerrarlo primero
+  if ($('lightbox').classList.contains('show')) {
+    closeLightbox();
+    // Volver a meter el estado actual al historial para que el siguiente atrás funcione
+    history.pushState({ screen: currentScreen }, '', '#' + currentScreen);
+    return;
+  }
+
+  const targetScreen = e.state?.screen;
+
+  if (!targetScreen) {
+    // No hay estado, ir al inicio según sesión
+    const dest = (currentUser || isVisitor) ? 'screen-list' : 'screen-login';
+    navigate(dest, true);
+    return;
+  }
+
+  // FIX 4: Si el retroceso lleva al login pero el usuario tiene sesión activa, ignorarlo
+  if (targetScreen === 'screen-login' && (currentUser || isVisitor)) {
+    // El usuario está logueado, no mandarlo al login; en cambio salir de la app
+    history.back(); // deja que el navegador maneje la salida real
+    return;
+  }
+
+  currentScreen = targetScreen;
+  _applyScreen(targetScreen);
+});
 
 /* ── Navbar ── */
 function updateNav() {
@@ -867,8 +992,8 @@ function updateNav() {
 
 /* ── Auth ── */
 async function handleLogin() {
-  const email   = $('li-email').value.trim();
-  const pass    = $('li-pass').value;
+  const email    = $('li-email').value.trim();
+  const pass     = $('li-pass').value;
   const remember = $('li-remember') ? $('li-remember').checked : false;
 
   if (!email || !pass)       { modal('warning','Ingresa tu correo y contraseña.'); return; }
@@ -887,14 +1012,17 @@ async function handleLogin() {
       modal('error', m); return;
     }
 
+    // FIX 4: Si NO marcó "mantener sesión", limpiar la sesión al cerrar
     if (!remember) {
+      // Supabase ya maneja persistSession:true, pero al no querer recordar,
+      // eliminamos el token guardado para que al reabrir la app pida login
       localStorage.removeItem('leon-gto-session');
     }
 
     currentUser = data.user;
     isVisitor   = false;
     updateNav();
-    showScreen('screen-list');
+    navigate('screen-list');
 
   } catch(e) { closeModal(); modal('error','Error inesperado.'); }
 }
@@ -921,7 +1049,7 @@ async function handleRegister() {
       modal('error','Este correo ya está registrado. Intenta iniciar sesión.'); return;
     }
     modal('success','¡Cuenta creada! Revisa tu correo para confirmar el registro.',[
-      {text:'Ir al Login',cls:'btn-green',cb:()=>{closeModal();showScreen('screen-login');}}
+      {text:'Ir al Login',cls:'btn-green',cb:()=>{closeModal();navigate('screen-login');}}
     ]);
   } catch(e) { closeModal(); modal('error','Error inesperado.'); }
 }
@@ -938,7 +1066,12 @@ async function handleForgot() {
   } catch(e) { modal('error','Error al enviar correo.'); }
 }
 
-function enterVisitor() { currentUser = null; isVisitor = true; updateNav(); showScreen('screen-list'); }
+function enterVisitor() {
+  currentUser = null;
+  isVisitor   = true;
+  updateNav();
+  navigate('screen-list');
+}
 
 function handleLogout() {
   modal('confirm','¿Deseas cerrar sesión?',[
@@ -946,7 +1079,12 @@ function handleLogout() {
       closeModal();
       if (sb) await sb.auth.signOut();
       localStorage.removeItem('leon-gto-session');
-      currentUser = null; isVisitor = false; showScreen('screen-login');
+      currentUser = null;
+      isVisitor   = false;
+      // Reemplazar el historial completo para que el Atrás no vuelva a la app
+      history.replaceState({ screen: 'screen-login' }, '', '#screen-login');
+      _applyScreen('screen-login');
+      currentScreen = 'screen-login';
     }},
     {text:'Cancelar',cls:'btn-blue',cb:closeModal}
   ]);
@@ -981,7 +1119,14 @@ async function loadProfiles() {
   }
 }
 
-/* ── Build Card (CAMBIO 2: foto principal clickeable) ── */
+/* ── FIX 3: SVG del badge verificado ── */
+const VERIFIED_SVG = `<svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 0.75L7.545 2.52L9.9 2.145L10.575 4.425L12.555 5.625L11.625 7.875L12.555 10.125L10.575 11.325L9.9 13.605L7.545 13.23L6 15L4.455 13.23L2.1 13.605L1.425 11.325L-0.555 10.125L0.375 7.875L-0.555 5.625L1.425 4.425L2.1 2.145L4.455 2.52L6 0.75Z" fill="rgba(74,222,128,0.25)" stroke="rgba(74,222,128,0.7)" stroke-width="0.5"/><path d="M3.8 6l1.4 1.4 2.8-2.8" stroke="#4ade80" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+function verifiedBadge() {
+  return `<span class="verified-badge">${VERIFIED_SVG} Verificado</span>`;
+}
+
+/* ── Build Card ── */
 function buildCard(p) {
   const imgSrc  = p.main_photo_url || PLACEHOLDER;
   const phone   = (p.phone || '').replace(/\D/g,'');
@@ -995,7 +1140,9 @@ function buildCard(p) {
     </div>
     <div class="card-body">
       <span class="card-name-label">Perfil</span>
-      <span class="card-name-value">${p.name}</span>
+      <div class="card-name-row">
+        <span class="card-name-value">${p.name}</span>${verifiedBadge()}
+      </div>
       <div class="card-loc">📍 ${p.location || 'León Gto'}</div>
       ${p.age ? `<div class="card-age">${p.age} años</div>` : ''}
       <div class="card-desc">${descSafe}</div>
@@ -1010,7 +1157,7 @@ function buildCard(p) {
   return el;
 }
 
-/* ── Profile Detail (CAMBIO 3 y CAMBIO 5) ── */
+/* ── Profile Detail ── */
 function viewProfile(id) {
   const p = profilesData.find(x => x.id === id); if (!p) return;
   const isOwner = currentUser && currentUser.id === p.user_id;
@@ -1018,14 +1165,9 @@ function viewProfile(id) {
   const imgSrc  = p.main_photo_url || PLACEHOLDER;
   const refs    = [p.ref_photo_1_url, p.ref_photo_2_url, p.ref_photo_3_url].filter(Boolean);
 
-  // CAMBIO 3: array de todas las fotos del perfil para navegar en lightbox
-  const allPhotos = [imgSrc, ...refs];
-  // Serializar para usar en onclick inline (JSON seguro)
+  const allPhotos  = [imgSrc, ...refs];
   const photosJson = JSON.stringify(allPhotos).replace(/'/g, "\\'").replace(/"/g, '&quot;');
-
   const descEscaped = (p.description || '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-
-  // CAMBIO 5: mensaje de WhatsApp pre-rellenado
   const waMsg = encodeURIComponent('Hola vi tu perfil en directorios León GTO, y me gustaría más información');
 
   $('detail-content').innerHTML = `
@@ -1053,7 +1195,11 @@ function viewProfile(id) {
       <div class="detail-body" style="border-radius:0">
         <div>
           <div class="detail-header-label">Perfil en León GTO</div>
-          <div class="detail-header-name">${p.name}</div>
+          <!-- FIX 3: Nombre + insignia verificado en el detalle -->
+          <div class="detail-name-row">
+            <div class="detail-header-name">${p.name}</div>
+            ${verifiedBadge()}
+          </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
           <div><div class="detail-label">Edad</div><div class="detail-value">${p.age ? p.age+' años' : '—'}</div></div>
@@ -1074,7 +1220,7 @@ function viewProfile(id) {
       </div>
     </div>`;
 
-  showScreen('screen-detail');
+  navigate('screen-detail');
   setTimeout(observeLazy, 50);
 }
 
@@ -1084,7 +1230,7 @@ function openNewProfile() {
   editingId = null;
   $('form-title').textContent = 'Crear Nuevo Perfil';
   resetForm();
-  showScreen('screen-form');
+  navigate('screen-form');
 }
 
 function openEdit(id) {
@@ -1096,7 +1242,6 @@ function openEdit(id) {
   $('f-age').value      = p.age         || '';
   $('f-desc').value     = p.description || '';
   $('f-phone').value    = p.phone       || '';
-  // CAMBIO 4: cargar ubicación guardada en el campo habilitado
   $('f-location').value = p.location    || 'León Gto';
   $('f-main-file').value = '';
   [1,2,3].forEach(n => { $(`f-ref${n}`).value = ''; });
@@ -1108,17 +1253,16 @@ function openEdit(id) {
     if (url) { img.src = url; img.style.display = 'block'; lbl.style.display = 'none'; }
     else     { img.src = ''; img.style.display = 'none';  lbl.style.display = 'flex'; }
   });
-  showScreen('screen-form');
+  navigate('screen-form');
 }
 
-/* ── Save Profile (CAMBIO 4: lee f-location) ── */
+/* ── Save Profile ── */
 async function saveProfile() {
   if (!currentUser) { modal('error','No tienes sesión activa.'); return; }
   const name     = $('f-name').value.trim();
   const age      = $('f-age').value;
   const desc     = $('f-desc').value.trim();
   const phone    = $('f-phone').value.trim();
-  // CAMBIO 4: leer el valor del campo habilitado, con fallback a 'León Gto'
   const location = ($('f-location').value.trim()) || 'León Gto';
   const mainFile = $('f-main-file').files[0];
 
@@ -1160,7 +1304,7 @@ async function saveProfile() {
     closeModal();
     if (dbError) throw dbError;
     modal('success', editingId ? 'Perfil actualizado con éxito.' : 'Perfil creado con éxito.', [
-      {text:'Ver Directorio',cls:'btn-green',cb:()=>{closeModal();showScreen('screen-list');}}
+      {text:'Ver Directorio',cls:'btn-green',cb:()=>{closeModal();navigate('screen-list');}}
     ]);
     resetForm();
   } catch(e) {
@@ -1191,7 +1335,7 @@ async function doDelete(id) {
     const { error } = await sb.from('profiles').delete().eq('id', id);
     if (error) throw error;
     modal('success','Perfil eliminado.',[
-      {text:'OK',cls:'btn-green',cb:()=>{closeModal();showScreen('screen-list');}}
+      {text:'OK',cls:'btn-green',cb:()=>{closeModal();navigate('screen-list');}}
     ]);
   } catch(e) { modal('error',`Error: ${e.message}`); }
 }
@@ -1213,7 +1357,6 @@ function previewRef(input, n) {
 }
 function resetForm() {
   ['f-name','f-age','f-desc','f-phone'].forEach(id => $(id).value = '');
-  // CAMBIO 4: resetear ubicación a valor default
   $('f-location').value = 'León Gto';
   $('f-main-file').value = '';
   $('f-main-prev').src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23252525'/%3E%3Ctext x='200' y='155' font-size='40' text-anchor='middle' fill='%23555'%3E📷%3C/text%3E%3C/svg%3E";
@@ -1226,18 +1369,32 @@ function resetForm() {
   editingId = null;
 }
 
-/* ── Init ── */
+/* ── FIX 4: Init — Detectar sesión activa, NO redirigir al login si ya hay sesión ── */
 async function init() {
   if (sb) {
     try {
       const { data: { session } } = await sb.auth.getSession();
       if (session?.user) {
-        currentUser = session.user; isVisitor = false; updateNav(); showScreen('screen-list'); return;
+        currentUser = session.user;
+        isVisitor   = false;
+        updateNav();
+        // Reemplazar el historial inicial con la pantalla correcta
+        navigate('screen-list', true);
+        return;
       }
-    } catch(e) {}
+    } catch(e) { console.warn('Session check error:', e); }
   }
-  showScreen('screen-login');
+
+  // Sin sesión: verificar si venimos de un hash en la URL
+  const hash = window.location.hash.replace('#', '');
+  const validScreens = ['screen-login','screen-register','screen-list','screen-form','screen-detail'];
+  if (hash && validScreens.includes(hash) && hash !== 'screen-list') {
+    navigate(hash, true);
+  } else {
+    navigate('screen-login', true);
+  }
 }
+
 window.onload = init;
 </script>
 </body>
