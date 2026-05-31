@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Directorio León GTO</title>
+<title>E-legirs</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -110,6 +110,15 @@ h1,h2,h3{font-family:'Playfair Display',serif;}
   text-shadow:0 0 10px rgba(245,158,11,0.4);
 }
 .btn-orange:hover{box-shadow:0 0 30px rgba(245,158,11,0.55),0 6px 20px rgba(0,0,0,0.5);}
+
+.btn-prices{
+  background:linear-gradient(135deg,rgba(255,92,200,0.10) 0%,rgba(233,30,140,0.18) 50%,rgba(194,24,91,0.22) 100%);
+  color:#ffb3e0;border:1px solid rgba(255,92,200,0.38);
+  box-shadow:0 0 14px rgba(233,30,140,0.18),0 4px 14px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.14);
+  text-shadow:0 0 10px rgba(233,30,140,0.45);
+  backdrop-filter:blur(12px);
+}
+.btn-prices:hover{box-shadow:0 0 26px rgba(233,30,140,0.40),0 6px 20px rgba(0,0,0,0.5);}
 
 .btn-dark{
   background:rgba(255,255,255,0.04);color:var(--text-2);
@@ -373,7 +382,7 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
   text-align:left;
 }
 .detail-header-name{
-  font-size:1.4rem;font-family:'Playfair Display',serif;font-weight:700;font-style:italic;
+  font-size:2rem;font-family:'Playfair Display',serif;font-weight:700;font-style:italic;
   color:#fff;line-height:1.2;
   text-align:left;
 }
@@ -513,13 +522,13 @@ img.loaded{opacity:1;}
     <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
       <rect width="30" height="30" rx="8" fill="url(#nbg)"/>
       <rect width="30" height="30" rx="8" fill="url(#nbgshine)"/>
-      <text x="15" y="21" font-size="16" font-weight="bold" fill="white" text-anchor="middle" font-family="Georgia,serif">L</text>
+      <text x="15" y="21" font-size="16" font-weight="bold" fill="white" text-anchor="middle" font-family="Georgia,serif">E</text>
       <defs>
         <linearGradient id="nbg" x1="0" y1="0" x2="30" y2="30"><stop offset="0%" stop-color="#ff5cc8"/><stop offset="100%" stop-color="#8b0a50"/></linearGradient>
         <linearGradient id="nbgshine" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(255,255,255,0.25)"/><stop offset="50%" stop-color="rgba(255,255,255,0)"/></linearGradient>
       </defs>
     </svg>
-    León GTO
+    E-legirs
   </div>
   <div class="navbar-right">
     <button id="nav-new-btn"    class="btn btn-pink btn-sm"  onclick="openNewProfile()" style="display:none">+ New</button>
@@ -536,7 +545,7 @@ img.loaded{opacity:1;}
         <div class="auth-logo" style="width:130px;height:130px;border-radius:28px;padding:0;overflow:hidden;background:transparent;box-shadow:0 0 36px rgba(233,30,140,0.45),0 10px 28px rgba(0,0,0,0.55);border:1px solid rgba(255,92,200,0.38);">
           <img src="logoperfilesapp.png" alt="Logo" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:28px;">
         </div>
-        <h1 class="auth-title">León GTO</h1>
+        <h1 class="auth-title" style="font-size:1.85rem">E-legirs</h1>
         <p class="auth-sub">Directorio de Perfiles</p>
         <div class="auth-fields">
           <div class="form-group">
@@ -626,7 +635,7 @@ img.loaded{opacity:1;}
 <div id="screen-list" class="screen">
   <div style="max-width:1100px;margin:0 auto;padding:1.5rem 1rem;position:relative;z-index:1">
     <div class="page-header">
-      <h1 class="page-title">Directorio <span>León GTO</span></h1>
+      <h1 class="page-title">Directorio <span>Perfiles</span></h1>
     </div>
     <div id="list-loading" class="state-box"><div class="spinner"></div><p>Cargando perfiles...</p></div>
     <div id="list-empty" class="state-box" style="display:none">
@@ -716,6 +725,29 @@ img.loaded{opacity:1;}
       Volver al directorio
     </button>
     <div id="detail-content" style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border-pk);box-shadow:0 24px 70px rgba(0,0,0,0.7),0 0 60px rgba(233,30,140,0.08)"></div>
+  </div>
+</div>
+
+<!-- ── PRICES ── -->
+<div id="screen-prices" class="screen">
+  <div style="max-width:700px;margin:0 auto;padding:1.5rem 1rem;position:relative;z-index:1">
+    <button class="back-btn" onclick="navigate('screen-detail')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      Volver al perfil
+    </button>
+    <div class="form-section">
+      <h2 class="form-section-title" style="display:flex;align-items:center;gap:0.6rem">
+        💰 Precios de Servicios
+      </h2>
+      <div id="prices-content" style="display:flex;flex-direction:column;gap:1.5rem">
+        <!-- Fase 2: aquí irán los precios del perfil -->
+        <div style="text-align:center;padding:3rem 1rem;color:var(--muted)">
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="margin:0 auto 1rem;display:block;color:var(--pink-4);opacity:0.5"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
+          <p style="font-size:1rem;font-weight:700;color:var(--text-2)">Información de precios próximamente</p>
+          <p style="font-size:0.85rem;margin-top:0.5rem">El perfil aún no ha registrado sus precios.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -906,6 +938,7 @@ const SCREEN_DEPTH = {
   'screen-list':     1,
   'screen-form':     2,
   'screen-detail':   2,
+  'screen-prices':   3,
 };
 
 let currentScreen = null;
@@ -1150,7 +1183,7 @@ function buildCard(p) {
     <div class="card-footer">
       <div class="row">
         <button class="btn btn-pink btn-sm" style="flex:1" onclick="viewProfile('${p.id}')">Ver Perfil</button>
-        <a href="https://wa.me/${phone}?text=${encodeURIComponent('Hola vi tu perfil en directorios León GTO, y me gustaría más información')}" target="_blank" class="btn btn-wa btn-sm" style="flex:1;text-align:center">💬 WhatsApp</a>
+        <a href="https://wa.me/${phone}?text=${encodeURIComponent('Hola vi tu perfil en E-legirs, y me gustaría más información')}" target="_blank" class="btn btn-wa btn-sm" style="flex:1;text-align:center">💬 WhatsApp</a>
       </div>
     </div>`;
 
@@ -1168,7 +1201,7 @@ function viewProfile(id) {
   const allPhotos  = [imgSrc, ...refs];
   const photosJson = JSON.stringify(allPhotos).replace(/'/g, "\\'").replace(/"/g, '&quot;');
   const descEscaped = (p.description || '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const waMsg = encodeURIComponent('Hola vi tu perfil en directorios León GTO, y me gustaría más información');
+  const waMsg = encodeURIComponent('Hola vi tu perfil en E-legirs, y me gustaría más información');
 
   $('detail-content').innerHTML = `
     <div style="background:linear-gradient(175deg,var(--dark-3) 0%,var(--dark-2) 100%);">
@@ -1194,7 +1227,7 @@ function viewProfile(id) {
       </div>` : ''}
       <div class="detail-body" style="border-radius:0">
         <div>
-          <div class="detail-header-label">Perfil en León GTO</div>
+          <div class="detail-header-label">Perfil en E-legirs</div>
           <!-- FIX 3: Nombre + insignia verificado en el detalle -->
           <div class="detail-name-row">
             <div class="detail-header-name">${p.name}</div>
@@ -1210,7 +1243,10 @@ function viewProfile(id) {
           <div class="detail-desc">${descEscaped}</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:0.55rem;padding-top:0.5rem">
-          <a href="https://wa.me/${phone}?text=${waMsg}" target="_blank" class="btn btn-wa btn-lg btn-full">💬 Contactar por WhatsApp</a>
+          <div style="display:flex;gap:0.55rem">
+            <a href="https://wa.me/${phone}?text=${waMsg}" target="_blank" class="btn btn-wa btn-lg" style="flex:1;text-align:center">💬 WhatsApp</a>
+            <button class="btn btn-prices btn-lg" style="flex:1" onclick="openPrices()">💰 Precios</button>
+          </div>
           ${isOwner ? `
           <div style="display:flex;gap:0.55rem">
             <button class="btn btn-orange btn-lg" style="flex:1" onclick="openEdit('${p.id}')">✏️ Editar Perfil</button>
@@ -1222,6 +1258,31 @@ function viewProfile(id) {
 
   navigate('screen-detail');
   setTimeout(observeLazy, 50);
+}
+
+/* ── Prices ── */
+function openPrices() {
+  // Si no hay sesión activa (ni usuario logueado), mostrar modal de registro
+  if (!currentUser) {
+    modal('confirm',
+      'Para ver los precios de servicios necesitas tener una cuenta e iniciar sesión.',
+      [
+        {
+          text: 'Ingresar',
+          cls: 'btn-green',
+          cb: () => { closeModal(); navigate('screen-login'); }
+        },
+        {
+          text: 'Cancelar',
+          cls: 'btn-blue',
+          cb: closeModal
+        }
+      ]
+    );
+    return;
+  }
+  // Usuario logueado: abrir pantalla de precios
+  navigate('screen-prices');
 }
 
 /* ── Form: New / Edit ── */
@@ -1387,7 +1448,7 @@ async function init() {
 
   // Sin sesión: verificar si venimos de un hash en la URL
   const hash = window.location.hash.replace('#', '');
-  const validScreens = ['screen-login','screen-register','screen-list','screen-form','screen-detail'];
+  const validScreens = ['screen-login','screen-register','screen-list','screen-form','screen-detail','screen-prices'];
   if (hash && validScreens.includes(hash) && hash !== 'screen-list') {
     navigate(hash, true);
   } else {
