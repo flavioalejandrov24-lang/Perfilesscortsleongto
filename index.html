@@ -120,6 +120,16 @@ h1,h2,h3{font-family:'Playfair Display',serif;}
 }
 .btn-prices:hover{box-shadow:0 0 26px rgba(233,30,140,0.40),0 6px 20px rgba(0,0,0,0.5);}
 
+.btn-yellow{
+  background:linear-gradient(135deg,rgba(251,191,36,0.14) 0%,rgba(234,179,8,0.24) 50%,rgba(161,98,7,0.32) 100%);
+  color:#fde68a;border:1px solid rgba(251,191,36,0.42);
+  box-shadow:0 0 14px rgba(234,179,8,0.22),0 4px 14px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.14);
+  text-shadow:0 0 8px rgba(234,179,8,0.5);
+  backdrop-filter:blur(12px);
+}
+.btn-yellow:hover{box-shadow:0 0 26px rgba(234,179,8,0.45),0 6px 20px rgba(0,0,0,0.5);}
+
+
 .btn-dark{
   background:rgba(255,255,255,0.04);color:var(--text-2);
   border:1px solid rgba(255,92,200,0.22);
@@ -773,16 +783,21 @@ img.loaded{opacity:1;}
 <!-- ── PRICES ── -->
 <div id="screen-prices" class="screen">
   <div style="max-width:700px;margin:0 auto;padding:1.5rem 1rem;position:relative;z-index:1">
-    <button class="back-btn" onclick="navigate('screen-detail')">
+    <button class="back-btn" onclick="history.back()">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       Volver al perfil
     </button>
     <div class="form-section">
-      <h2 class="form-section-title" style="display:flex;align-items:center;gap:0.6rem">
+      <h2 class="form-section-title" style="display:flex;align-items:center;gap:0.6rem;color:#ffffff">
         💰 Precios de Servicios
       </h2>
       <div id="prices-content" style="display:flex;flex-direction:column;gap:1.5rem">
         <!-- Populated dynamically by openPrices() -->
+      </div>
+      <div style="padding-top:1.2rem">
+        <button class="btn btn-yellow btn-lg btn-full" onclick="history.back()">
+          ← Volver
+        </button>
       </div>
     </div>
   </div>
@@ -1255,8 +1270,9 @@ function buildCard(p) {
     </div>
     <div class="card-footer">
       <div class="row">
-        <button class="btn btn-pink btn-sm" style="flex:1" onclick="viewProfile('${p.id}')">Ver Perfil</button>
-        <a href="https://wa.me/${phone}?text=${encodeURIComponent('Hola vi tu perfil en E-legirs, y me gustaría más información')}" target="_blank" class="btn btn-wa btn-sm" style="flex:1;text-align:center">💬 WhatsApp</a>
+        <button class="btn btn-pink btn-sm" style="flex:1;font-size:0.74rem;padding:0.5rem 0.4rem" onclick="viewProfile('${p.id}')">Ver Perfil</button>
+        <a href="https://wa.me/${phone}?text=${encodeURIComponent('Hola vi tu perfil en E-legirs, y me gustaría más información')}" target="_blank" class="btn btn-wa btn-sm" style="flex:1;text-align:center;font-size:0.74rem;padding:0.5rem 0.4rem">💬 WA</a>
+        <button class="btn btn-yellow btn-sm" style="flex:1;font-size:0.74rem;padding:0.5rem 0.4rem" onclick="openPrices('${p.id}')">💰 Precios</button>
       </div>
     </div>`;
 
