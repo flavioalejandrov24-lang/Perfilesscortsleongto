@@ -505,7 +505,43 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
 .state-box{text-align:center;padding:4rem 1rem;color:var(--muted);font-weight:700;}
 .state-box p{margin-top:0.75rem;font-size:0.95rem;}
 
-/* ── FORM CARD ── */
+/* ── Terms modal overlay ── */
+#terms-overlay{
+  position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.82);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.25s;
+  padding:0;
+}
+#terms-overlay.show{opacity:1;pointer-events:all;}
+#terms-box{
+  background:linear-gradient(170deg,var(--dark-3) 0%,var(--dark-2) 100%);
+  border:1px solid var(--border-pk);
+  border-radius:22px 22px 0 0;
+  width:100%;max-width:640px;
+  max-height:88vh;
+  overflow-y:auto;
+  padding:1.8rem 1.5rem 2.5rem;
+  transform:translateY(100%);
+  transition:transform 0.32s cubic-bezier(.34,1.2,.64,1);
+  box-shadow:0 -20px 60px rgba(0,0,0,0.7),0 0 40px rgba(233,30,140,0.08);
+}
+#terms-overlay.show #terms-box{transform:translateY(0);}
+.terms-title{
+  font-family:'Playfair Display',serif;font-size:1.4rem;font-style:italic;
+  color:#fff;margin-bottom:0.35rem;display:flex;align-items:center;gap:0.6rem;
+}
+.terms-body{font-size:0.88rem;color:var(--text-2);line-height:1.78;display:flex;flex-direction:column;gap:1rem;}
+.terms-body h3{font-size:0.82rem;font-weight:800;letter-spacing:0.07em;text-transform:uppercase;color:var(--pink-4);margin-bottom:-0.4rem;}
+.shield-btn{
+  background:none;border:none;cursor:pointer;
+  display:inline-flex;align-items:center;gap:0.4rem;
+  color:var(--text-2);font-size:0.8rem;font-weight:700;font-family:'Nunito',sans-serif;
+  padding:0.3rem 0.6rem;border-radius:var(--radius-sm);
+  transition:color 0.15s,background 0.15s;
+  border:1px solid var(--border);
+}
+.shield-btn:hover{color:var(--pink-4);background:rgba(233,30,140,0.08);border-color:var(--border-pk);}
+
 .form-section{background:linear-gradient(170deg,var(--dark-3) 0%,var(--dark-2) 100%);border-radius:var(--radius);border:1px solid var(--border);padding:1.75rem;box-shadow:var(--shadow);}
 .form-section-title{font-size:1.5rem;color:var(--pink-4);font-style:italic;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
 
@@ -636,6 +672,7 @@ img.loaded{opacity:1;}
   <div style="max-width:1100px;margin:0 auto;padding:1.5rem 1rem;position:relative;z-index:1">
     <div class="page-header">
       <h1 class="page-title">Directorio <span>Perfiles</span></h1>
+      <button class="shield-btn" onclick="openTerms()">🛡️ Términos</button>
     </div>
     <div id="list-loading" class="state-box"><div class="spinner"></div><p>Cargando perfiles...</p></div>
     <div id="list-empty" class="state-box" style="display:none">
@@ -676,7 +713,7 @@ img.loaded{opacity:1;}
             </div>
             <div class="form-group">
               <label class="field-label">Lugar</label>
-              <input type="text" id="f-location" value="León Gto" class="form-input" placeholder="Ej. León Gto">
+              <input type="text" id="f-location" value="" class="form-input" placeholder="Ej. León Gto, CDMX, Monterrey...">
             </div>
           </div>
         </div>
@@ -703,6 +740,11 @@ img.loaded{opacity:1;}
         <div class="form-group">
           <label class="field-label req">Descripción</label>
           <textarea id="f-desc" class="form-textarea" rows="3" placeholder="Describe el perfil..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="field-label">Precios de Servicios</label>
+          <textarea id="f-prices" class="form-textarea" rows="4" placeholder="Describe tus precios y servicios...">El dueño del perfil ha decidido no compartir esta información.</textarea>
+          <span style="font-size:0.73rem;color:var(--muted);margin-top:0.25rem">Esta información solo es visible para usuarios con sesión activa.</span>
         </div>
         <div class="form-group">
           <label class="field-label req">Teléfono / WhatsApp</label>
@@ -740,13 +782,43 @@ img.loaded{opacity:1;}
         💰 Precios de Servicios
       </h2>
       <div id="prices-content" style="display:flex;flex-direction:column;gap:1.5rem">
-        <!-- Fase 2: aquí irán los precios del perfil -->
-        <div style="text-align:center;padding:3rem 1rem;color:var(--muted)">
-          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="margin:0 auto 1rem;display:block;color:var(--pink-4);opacity:0.5"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
-          <p style="font-size:1rem;font-weight:700;color:var(--text-2)">Información de precios próximamente</p>
-          <p style="font-size:0.85rem;margin-top:0.5rem">El perfil aún no ha registrado sus precios.</p>
-        </div>
+        <!-- Populated dynamically by openPrices() -->
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TERMS & CONDITIONS OVERLAY ── -->
+<div id="terms-overlay" onclick="if(event.target===this)closeTerms()">
+  <div id="terms-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">
+      <div class="terms-title">🛡️ Términos y Condiciones</div>
+      <button onclick="closeTerms()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.3rem;line-height:1;padding:0.2rem 0.5rem;transition:color 0.15s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--muted)'">✕</button>
+    </div>
+    <div class="terms-body">
+      <p>Bienvenido a <strong style="color:var(--pink-4)">E-legirs</strong>. Al acceder y utilizar esta plataforma, aceptas los siguientes términos y condiciones en su totalidad. Te recomendamos leerlos con atención.</p>
+
+      <h3>1. Naturaleza de la plataforma</h3>
+      <p>E-legirs es una plataforma digital independiente operada por un equipo de trabajo autónomo. <strong>No somos ni pertenecemos a ninguna empresa, corporación, asociación, organización o entidad con personalidad jurídica registrada.</strong> Operamos exclusivamente como un equipo de personas enfocado en el desarrollo y mantenimiento de herramientas digitales.</p>
+
+      <h3>2. Objetivo y alcance</h3>
+      <p>Nuestro único objetivo es <strong>brindar al usuario herramientas digitales</strong> que faciliten la búsqueda y presentación de perfiles de manera más eficaz, organizada y accesible. No promovemos, coordinamos ni participamos en ninguna actividad comercial entre los usuarios de la plataforma.</p>
+
+      <h3>3. Exención de cobros y pagos</h3>
+      <p>E-legirs se deslinda expresamente de <strong>cualquier transacción económica, cobro, pago o acuerdo comercial</strong> que pueda generarse entre los usuarios. El uso de esta aplicación web es completamente ajeno a cualquier tipo de contraprestación económica hacia nuestra plataforma. Los servicios, tarifas o acuerdos que puedan existir entre usuarios son responsabilidad exclusiva de las partes involucradas.</p>
+
+      <h3>4. Verificación de perfiles</h3>
+      <p>Uno de nuestros compromisos fundamentales es <strong>garantizar la autenticidad de los perfiles publicados</strong>. Cada perfil que aparece con la insignia de <em style="color:#86efac">✔ Verificado</em> ha pasado por un proceso de validación interno para confirmar que se trata de una persona real. Sin embargo, E-legirs no se hace responsable por el contenido, comportamiento o acciones de los usuarios fuera de la plataforma.</p>
+
+      <h3>5. Responsabilidad del usuario</h3>
+      <p>El usuario acepta utilizar la plataforma de forma responsable y conforme a las leyes aplicables en su lugar de residencia. Cualquier uso indebido, fraudulento o contrario a estos términos podrá resultar en la suspensión del acceso sin previo aviso.</p>
+
+      <h3>6. Modificaciones</h3>
+      <p>E-legirs se reserva el derecho de actualizar estos términos en cualquier momento. Los cambios entrarán en vigor en el momento de su publicación en la plataforma.</p>
+
+      <p style="font-size:0.78rem;color:var(--muted);border-top:1px solid var(--border);padding-top:0.9rem;margin-top:0.4rem">Última actualización: 2025 · E-legirs · Plataforma digital independiente</p>
+
+      <button class="btn btn-pink btn-lg" style="width:100%;margin-top:0.5rem" onclick="closeTerms()">Entendido, continuar</button>
     </div>
   </div>
 </div>
@@ -1133,8 +1205,9 @@ async function loadProfiles() {
   }
   try {
     const { data, error } = await sb.from('profiles')
-      .select('id,user_id,name,age,location,description,phone,main_photo_url,ref_photo_1_url,ref_photo_2_url,ref_photo_3_url,created_at')
-      .order('created_at',{ascending:false});
+      .select('id,user_id,name,age,location,description,phone,prices,main_photo_url,ref_photo_1_url,ref_photo_2_url,ref_photo_3_url,created_at')
+      .order('location',{ascending:true})
+      .order('name',{ascending:true});
     loading.style.display = 'none';
     if (error) throw error;
     profilesData = data || [];
@@ -1176,7 +1249,7 @@ function buildCard(p) {
       <div class="card-name-row">
         <span class="card-name-value">${p.name}</span>${verifiedBadge()}
       </div>
-      <div class="card-loc">📍 ${p.location || 'León Gto'}</div>
+      <div class="card-loc">📍 ${p.location || 'Sin ubicación'}</div>
       ${p.age ? `<div class="card-age">${p.age} años</div>` : ''}
       <div class="card-desc">${descSafe}</div>
     </div>
@@ -1236,7 +1309,7 @@ function viewProfile(id) {
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
           <div><div class="detail-label">Edad</div><div class="detail-value">${p.age ? p.age+' años' : '—'}</div></div>
-          <div><div class="detail-label">Ubicación</div><div class="detail-value">${p.location||'León Gto'}</div></div>
+          <div><div class="detail-label">Ubicación</div><div class="detail-value">${p.location||'Sin ubicación'}</div></div>
         </div>
         <div>
           <div class="detail-label">Descripción</div>
@@ -1245,7 +1318,7 @@ function viewProfile(id) {
         <div style="display:flex;flex-direction:column;gap:0.55rem;padding-top:0.5rem">
           <div style="display:flex;gap:0.55rem">
             <a href="https://wa.me/${phone}?text=${waMsg}" target="_blank" class="btn btn-wa btn-lg" style="flex:1;text-align:center">💬 WhatsApp</a>
-            <button class="btn btn-prices btn-lg" style="flex:1" onclick="openPrices()">💰 Precios</button>
+            <button class="btn btn-prices btn-lg" style="flex:1" onclick="openPrices('${p.id}')">💰 Precios</button>
           </div>
           ${isOwner ? `
           <div style="display:flex;gap:0.55rem">
@@ -1261,27 +1334,44 @@ function viewProfile(id) {
 }
 
 /* ── Prices ── */
-function openPrices() {
-  // Si no hay sesión activa (ni usuario logueado), mostrar modal de registro
+function openPrices(profileId) {
   if (!currentUser) {
     modal('confirm',
       'Para ver los precios de servicios necesitas tener una cuenta e iniciar sesión.',
       [
-        {
-          text: 'Ingresar',
-          cls: 'btn-green',
-          cb: () => { closeModal(); navigate('screen-login'); }
-        },
-        {
-          text: 'Cancelar',
-          cls: 'btn-blue',
-          cb: closeModal
-        }
+        { text:'Ingresar', cls:'btn-green', cb:()=>{ closeModal(); navigate('screen-login'); } },
+        { text:'Cancelar', cls:'btn-blue',  cb:closeModal }
       ]
     );
     return;
   }
-  // Usuario logueado: abrir pantalla de precios
+
+  const p = profilesData.find(x => x.id === profileId);
+  const pricesText = (p && p.prices && p.prices.trim())
+    ? p.prices
+    : 'El dueño del perfil ha decidido no compartir esta información.';
+
+  const isDefault = pricesText === 'El dueño del perfil ha decidido no compartir esta información.';
+
+  $('prices-content').innerHTML = `
+    <div style="background:linear-gradient(135deg,rgba(233,30,140,0.07) 0%,rgba(0,0,0,0) 100%);border:1px solid var(--border-pk);border-radius:var(--radius);padding:1.4rem 1.2rem;">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.9rem">
+        <span style="font-size:1.1rem">💰</span>
+        <span style="font-size:0.72rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--pink-3)">Información de Precios</span>
+      </div>
+      ${isDefault
+        ? `<div style="text-align:center;padding:1.5rem 0;color:var(--muted)">
+             <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="margin:0 auto 0.8rem;display:block;opacity:0.4"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+             <p style="font-size:0.92rem;font-weight:700;color:var(--text-2)">Sin información disponible</p>
+             <p style="font-size:0.82rem;margin-top:0.4rem">El perfil no ha registrado precios aún.</p>
+           </div>`
+        : `<p style="font-size:0.95rem;color:var(--text-2);line-height:1.78;white-space:pre-wrap;word-break:break-word">${pricesText.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>`
+      }
+    </div>
+    <p style="font-size:0.74rem;color:var(--muted);text-align:center;padding-top:0.3rem">
+      🔒 Esta información es exclusiva para usuarios registrados
+    </p>`;
+
   navigate('screen-prices');
 }
 
@@ -1302,8 +1392,9 @@ function openEdit(id) {
   $('f-name').value     = p.name        || '';
   $('f-age').value      = p.age         || '';
   $('f-desc').value     = p.description || '';
+  $('f-prices').value   = p.prices      || 'El dueño del perfil ha decidido no compartir esta información.';
   $('f-phone').value    = p.phone       || '';
-  $('f-location').value = p.location    || 'León Gto';
+  $('f-location').value = p.location    || '';
   $('f-main-file').value = '';
   [1,2,3].forEach(n => { $(`f-ref${n}`).value = ''; });
   if (p.main_photo_url) $('f-main-prev').src = p.main_photo_url;
@@ -1324,7 +1415,8 @@ async function saveProfile() {
   const age      = $('f-age').value;
   const desc     = $('f-desc').value.trim();
   const phone    = $('f-phone').value.trim();
-  const location = ($('f-location').value.trim()) || 'León Gto';
+  const location = ($('f-location').value.trim()) || '';
+  const prices   = $('f-prices').value.trim() || 'El dueño del perfil ha decidido no compartir esta información.';
   const mainFile = $('f-main-file').files[0];
 
   if (!name || !desc || !phone) { modal('warning','Completa Nombre, Descripción y Teléfono.'); return; }
@@ -1349,14 +1441,14 @@ async function saveProfile() {
     let dbError;
     if (editingId) {
       ({ error: dbError } = await sb.from('profiles').update({
-        name, description: desc, phone, location,
+        name, description: desc, phone, location, prices,
         age: age ? parseInt(age) : null,
         main_photo_url: mainUrl, ref_photo_1_url: ref1Url,
         ref_photo_2_url: ref2Url, ref_photo_3_url: ref3Url,
       }).eq('id', editingId).eq('user_id', currentUser.id));
     } else {
       ({ error: dbError } = await sb.from('profiles').insert([{
-        user_id: currentUser.id, name, description: desc, phone, location,
+        user_id: currentUser.id, name, description: desc, phone, location, prices,
         age: age ? parseInt(age) : null,
         main_photo_url: mainUrl, ref_photo_1_url: ref1Url,
         ref_photo_2_url: ref2Url, ref_photo_3_url: ref3Url,
@@ -1418,7 +1510,8 @@ function previewRef(input, n) {
 }
 function resetForm() {
   ['f-name','f-age','f-desc','f-phone'].forEach(id => $(id).value = '');
-  $('f-location').value = 'León Gto';
+  $('f-prices').value   = 'El dueño del perfil ha decidido no compartir esta información.';
+  $('f-location').value = '';
   $('f-main-file').value = '';
   $('f-main-prev').src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23252525'/%3E%3Ctext x='200' y='155' font-size='40' text-anchor='middle' fill='%23555'%3E📷%3C/text%3E%3C/svg%3E";
   [1,2,3].forEach(n => {
@@ -1428,6 +1521,16 @@ function resetForm() {
     $(`f-ref${n}-lbl`).style.display = 'flex';
   });
   editingId = null;
+}
+
+/* ── Terms & Conditions ── */
+function openTerms() {
+  document.getElementById('terms-overlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeTerms() {
+  document.getElementById('terms-overlay').classList.remove('show');
+  document.body.style.overflow = '';
 }
 
 /* ── FIX 4: Init — Detectar sesión activa, NO redirigir al login si ya hay sesión ── */
