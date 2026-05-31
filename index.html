@@ -556,7 +556,7 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
 .form-section-title{font-size:1.5rem;color:var(--pink-4);font-style:italic;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
 
 /* ── LAZY IMAGE ── */
-img[data-src]{opacity:0;transition:opacity 0.3s ease;}
+img[data-src]{opacity:0;transition:opacity 0.4s ease;}
 img.loaded{opacity:1;}
 </style>
 </head>
@@ -796,7 +796,7 @@ img.loaded{opacity:1;}
       </div>
       <div style="padding-top:1.2rem">
         <button class="btn btn-yellow btn-lg btn-full" onclick="history.back()">
-          ← Volver
+          Volver
         </button>
       </div>
     </div>
@@ -876,7 +876,8 @@ let currentUser = null, isVisitor = false, profilesData = [], editingId = null;
 const $ = id => document.getElementById(id);
 const RX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/* ── Lazy Image Loader ── */
+/* ── Lazy Image Loader — optimizado ── */
+// rootMargin amplio: pre-carga imágenes 400px antes de que sean visibles
 const imgObserver = typeof IntersectionObserver !== 'undefined'
   ? new IntersectionObserver((entries) => {
       entries.forEach(e => {
@@ -884,13 +885,21 @@ const imgObserver = typeof IntersectionObserver !== 'undefined'
           const img = e.target;
           const src = img.dataset.src;
           if (!src) return;
-          img.src = src;
-          img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
-          img.addEventListener('error', () => { img.src = PLACEHOLDER; img.classList.add('loaded'); }, { once: true });
+          // Pre-load en objeto Image para que el browser cachee antes de asignar al DOM
+          const preloader = new Image();
+          preloader.onload = () => {
+            img.src = src;
+            img.classList.add('loaded');
+          };
+          preloader.onerror = () => {
+            img.src = PLACEHOLDER;
+            img.classList.add('loaded');
+          };
+          preloader.src = src;
           imgObserver.unobserve(img);
         }
       });
-    }, { rootMargin: '120px' })
+    }, { rootMargin: '400px 0px', threshold: 0 })
   : null;
 
 const PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%231c1c1c'/%3E%3Ctext x='200' y='160' font-size='36' text-anchor='middle' fill='%23444'%3ESin Foto%3C/text%3E%3C/svg%3E";
@@ -1211,9 +1220,27 @@ function handleLogout() {
 }
 
 /* ── Profiles Load ── */
-async function loadProfiles() {
+/* ── Cache de perfiles en memoria ── */
+let profilesCache = null;      // datos cacheados
+let profilesCacheTs = 0;       // timestamp del último fetch
+const CACHE_TTL = 60 * 1000;  // 60 segundos antes de re-fetch
+
+async function loadProfiles(forceRefresh = false) {
   const grid=$('profiles-grid'), loading=$('list-loading'), empty=$('list-empty');
+
+  // Si hay caché reciente y no forzamos refresh, renderizar de inmediato
+  const now = Date.now();
+  if (!forceRefresh && profilesCache && (now - profilesCacheTs) < CACHE_TTL) {
+    loading.style.display = 'none';
+    empty.style.display   = 'none';
+    profilesData = profilesCache;
+    _renderGrid(grid, empty);
+    return;
+  }
+
+  // Sin caché: mostrar spinner y hacer fetch
   grid.style.display='none'; empty.style.display='none'; loading.style.display='block';
+
   if (!sb) {
     loading.style.display='none'; empty.style.display='block';
     $('list-empty-msg').textContent='Configura Supabase para ver los perfiles.'; return;
@@ -1225,19 +1252,26 @@ async function loadProfiles() {
       .order('name',{ascending:true});
     loading.style.display = 'none';
     if (error) throw error;
-    profilesData = data || [];
-    if (!profilesData.length) {
-      empty.style.display='block'; $('list-empty-msg').textContent='No hay perfiles aún.'; return;
-    }
-    grid.innerHTML = ''; grid.style.display = 'grid';
-    const frag = document.createDocumentFragment();
-    profilesData.forEach(p => frag.appendChild(buildCard(p)));
-    grid.appendChild(frag);
-    observeLazy();
+    profilesData    = data || [];
+    profilesCache   = profilesData;
+    profilesCacheTs = Date.now();
+    _renderGrid(grid, empty);
   } catch(e) {
     loading.style.display='none'; empty.style.display='block';
     $('list-empty-msg').textContent='Error al cargar perfiles.';
   }
+}
+
+function _renderGrid(grid, empty) {
+  if (!profilesData.length) {
+    empty.style.display='block'; $('list-empty-msg').textContent='No hay perfiles aún.'; return;
+  }
+  grid.innerHTML = ''; grid.style.display = 'grid';
+  const frag = document.createDocumentFragment();
+  profilesData.forEach(p => frag.appendChild(buildCard(p)));
+  grid.appendChild(frag);
+  // Pequeño delay para que el DOM pinte antes de lanzar el observer
+  requestAnimationFrame(() => observeLazy());
 }
 
 /* ── FIX 3: SVG del badge verificado ── */
@@ -1270,9 +1304,9 @@ function buildCard(p) {
     </div>
     <div class="card-footer">
       <div class="row">
-        <button class="btn btn-pink btn-sm" style="flex:1;font-size:0.74rem;padding:0.5rem 0.4rem" onclick="viewProfile('${p.id}')">Ver Perfil</button>
-        <a href="https://wa.me/${phone}?text=${encodeURIComponent('Hola vi tu perfil en E-legirs, y me gustaría más información')}" target="_blank" class="btn btn-wa btn-sm" style="flex:1;text-align:center;font-size:0.74rem;padding:0.5rem 0.4rem">💬 WA</a>
-        <button class="btn btn-yellow btn-sm" style="flex:1;font-size:0.74rem;padding:0.5rem 0.4rem" onclick="openPrices('${p.id}')">💰 Precios</button>
+        <button class="btn btn-pink btn-sm" style="flex:1;font-size:0.73rem;padding:0.48rem 0.3rem;letter-spacing:0" onclick="viewProfile('${p.id}')">Perfil</button>
+        <a href="https://wa.me/${phone}?text=${encodeURIComponent('Hola vi tu perfil en E-legirs, y me gustaría más información')}" target="_blank" class="btn btn-wa btn-sm" style="flex:1;text-align:center;font-size:0.73rem;padding:0.48rem 0.3rem;letter-spacing:0">WhatsApp</a>
+        <button class="btn btn-yellow btn-sm" style="flex:1;font-size:0.73rem;padding:0.48rem 0.3rem;letter-spacing:0" onclick="openPrices('${p.id}')">Precios</button>
       </div>
     </div>`;
 
@@ -1472,6 +1506,7 @@ async function saveProfile() {
     }
     closeModal();
     if (dbError) throw dbError;
+    profilesCache = null; // invalidar caché para que recargue al volver
     modal('success', editingId ? 'Perfil actualizado con éxito.' : 'Perfil creado con éxito.', [
       {text:'Ver Directorio',cls:'btn-green',cb:()=>{closeModal();navigate('screen-list');}}
     ]);
@@ -1503,6 +1538,7 @@ async function doDelete(id) {
   try {
     const { error } = await sb.from('profiles').delete().eq('id', id);
     if (error) throw error;
+    profilesCache = null; // invalidar caché
     modal('success','Perfil eliminado.',[
       {text:'OK',cls:'btn-green',cb:()=>{closeModal();navigate('screen-list');}}
     ]);
