@@ -129,7 +129,6 @@ h1,h2,h3{font-family:'Playfair Display',serif;}
 }
 .btn-yellow:hover{box-shadow:0 0 26px rgba(234,179,8,0.45),0 6px 20px rgba(0,0,0,0.5);}
 
-
 .btn-dark{
   background:rgba(255,255,255,0.04);color:var(--text-2);
   border:1px solid rgba(255,92,200,0.22);
@@ -185,12 +184,10 @@ h1,h2,h3{font-family:'Playfair Display',serif;}
 .visitor-hand{
   font-size:1.6rem;
   display:inline-block;
-  /* Ahora apunta a la izquierda (👈) y rebota hacia la derecha → izquierda */
   animation:hand-bounce 0.7s ease-in-out infinite alternate;
   filter:drop-shadow(0 0 8px rgba(255,92,200,0.7));
   flex-shrink:0;
   line-height:1;
-  /* La manita queda a la DERECHA, así que la animación la acerca al botón */
 }
 @keyframes hand-bounce{
   0%  { transform:translateX(0)    scale(1);   }
@@ -277,7 +274,6 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
   color:#4ade80;
   filter:drop-shadow(0 0 4px rgba(74,222,128,0.6));
 }
-/* Nombre + badge en la tarjeta */
 .card-name-row{
   display:flex;
   align-items:center;
@@ -285,7 +281,6 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
   gap:0.1rem;
   margin-bottom:0.35rem;
 }
-/* Nombre + badge en el detalle */
 .detail-name-row{
   display:flex;
   align-items:center;
@@ -318,19 +313,36 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
   line-height:1.2;
 }
 
-.profile-card .card-img-wrap{position:relative;overflow:hidden;cursor:pointer;}
-.profile-card .card-img{width:100%;height:270px;object-fit:cover;background:var(--dark-4);display:block;transition:transform 0.3s ease;}
+/* ── SKELETON SHIMMER para fotos ── */
+.card-img-skeleton {
+  width:100%;height:270px;
+  background:linear-gradient(90deg, var(--dark-4) 25%, var(--dark-5) 50%, var(--dark-4) 75%);
+  background-size:200% 100%;
+  animation:skeleton-shimmer 1.6s infinite ease-in-out;
+  position:relative;
+  overflow:hidden;
+}
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position:-200% 0; }
+}
+.card-img-wrap{position:relative;overflow:hidden;cursor:pointer;}
+.card-img{
+  width:100%;height:270px;object-fit:cover;background:var(--dark-4);
+  display:block;transition:transform 0.3s ease, opacity 0.45s ease;
+  opacity:0;
+}
+.card-img.img-loaded{opacity:1;}
 .profile-card:hover .card-img{transform:scale(1.02);}
-.profile-card .card-body{padding:1rem 1rem 0.75rem;flex:1;}
-.profile-card .card-loc{font-size:0.74rem;color:var(--pink-4);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;}
-.profile-card .card-age{font-size:0.82rem;color:var(--muted);margin-top:0.1rem;}
-.profile-card .card-desc{
+.card-body{padding:1rem 1rem 0.75rem;flex:1;}
+.card-loc{font-size:0.74rem;color:var(--pink-4);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;}
+.card-age{font-size:0.82rem;color:var(--muted);margin-top:0.1rem;}
+.card-desc{
   font-size:0.95rem;color:var(--text-2);margin-top:0.5rem;line-height:1.6;
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
   word-break:break-word;
 }
-
-.profile-card .card-footer{
+.card-footer{
   padding:0.8rem 1rem;
   background:linear-gradient(0deg,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.1) 100%);
   border-top:1px solid var(--border);
@@ -385,49 +397,22 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
 .detail-label{font-size:0.69rem;text-transform:uppercase;letter-spacing:0.09em;color:var(--pink-3);font-weight:800;}
 .detail-value{font-weight:700;color:var(--text);font-size:1rem;margin-top:0.15rem;}
 .detail-name{font-size:2rem;font-family:'Playfair Display',serif;font-weight:700;font-style:italic;color:#fff;line-height:1.2;}
-
-.detail-header-label{
-  font-size:0.69rem;text-transform:uppercase;letter-spacing:0.09em;
-  color:var(--pink-3);font-weight:800;
-  text-align:left;
-}
-.detail-header-name{
-  font-size:2rem;font-family:'Playfair Display',serif;font-weight:700;font-style:italic;
-  color:#fff;line-height:1.2;
-  text-align:left;
-}
-
-.detail-desc{
-  font-size:0.93rem;color:var(--text-2);line-height:1.72;
-  margin-top:0.25rem;white-space:pre-wrap;word-break:break-word;
-}
-.detail-phone{
-  font-size:1.4rem;font-weight:900;
-  color:#e88ec4;
-  text-decoration:none;
-  text-shadow:0 0 14px rgba(232,142,196,0.35);
-  transition:color 0.2s;
-}
+.detail-header-label{font-size:0.69rem;text-transform:uppercase;letter-spacing:0.09em;color:var(--pink-3);font-weight:800;text-align:left;}
+.detail-header-name{font-size:2rem;font-family:'Playfair Display',serif;font-weight:700;font-style:italic;color:#fff;line-height:1.2;text-align:left;}
+.detail-desc{font-size:0.93rem;color:var(--text-2);line-height:1.72;margin-top:0.25rem;white-space:pre-wrap;word-break:break-word;}
+.detail-phone{font-size:1.4rem;font-weight:900;color:#e88ec4;text-decoration:none;text-shadow:0 0 14px rgba(232,142,196,0.35);transition:color 0.2s;}
 .detail-phone:hover{color:#ffb3de;}
-
 .ref-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;}
-.ref-grid img{
-  width:100%;height:105px;object-fit:cover;border-radius:9px;
-  cursor:pointer;transition:transform 0.18s,box-shadow 0.18s;
-  border:2px solid transparent;
-}
-.ref-grid img:hover{
-  transform:scale(1.04);
-  box-shadow:0 0 0 2px var(--pink-4),0 6px 18px rgba(233,30,140,0.35);
-}
+.ref-grid img{width:100%;height:105px;object-fit:cover;border-radius:9px;cursor:pointer;transition:transform 0.18s,box-shadow 0.18s;border:2px solid transparent;}
+.ref-grid img:hover{transform:scale(1.04);box-shadow:0 0 0 2px var(--pink-4),0 6px 18px rgba(233,30,140,0.35);}
 
-/* ── FIX 2: LIGHTBOX con botones nav en los BORDES reales ── */
+/* ── LIGHTBOX ── */
 #lightbox{
   position:fixed;inset:0;z-index:99999;
   background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);
   display:flex;align-items:center;justify-content:center;
   opacity:0;pointer-events:none;transition:opacity 0.22s;
-  padding:0;  /* sin padding para que los botones lleguen al borde */
+  padding:0;
 }
 #lightbox.show{opacity:1;pointer-events:all;}
 #lightbox-img{
@@ -449,40 +434,22 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
   z-index:100001;
 }
 #lightbox-close:hover{background:rgba(233,30,140,0.55);transform:scale(1.1);}
-
-/* FIX 2: Botones prev/next pegados a los BORDES laterales de la pantalla */
 .lb-nav{
-  position:fixed;
-  top:50%;
-  transform:translateY(-50%);
+  position:fixed;top:50%;transform:translateY(-50%);
   width:48px;height:56px;
-  border-radius:0 10px 10px 0; /* borde redondeado solo al interior */
-  background:rgba(233,30,140,0.28);
-  backdrop-filter:blur(8px);
+  background:rgba(233,30,140,0.28);backdrop-filter:blur(8px);
   border:1px solid rgba(255,92,200,0.35);
   color:#ffb3e0;font-size:1.6rem;font-weight:700;
   display:flex;align-items:center;justify-content:center;cursor:pointer;
   box-shadow:0 0 18px rgba(233,30,140,0.25);
   transition:background 0.15s,transform 0.15s;
-  z-index:100001;
-  user-select:none;
-  line-height:1;
+  z-index:100001;user-select:none;line-height:1;
 }
 .lb-nav:hover{background:rgba(233,30,140,0.55);}
 .lb-nav.hidden{opacity:0;pointer-events:none;}
-
-/* Prev: pegado al borde IZQUIERDO */
-#lb-prev{
-  left:0;
-  border-radius:0 10px 10px 0;
-}
+#lb-prev{left:0;border-radius:0 10px 10px 0;}
 #lb-prev:hover{transform:translateY(-50%) translateX(3px);}
-
-/* Next: pegado al borde DERECHO */
-#lb-next{
-  right:0;
-  border-radius:10px 0 0 10px;
-}
+#lb-next{right:0;border-radius:10px 0 0 10px;}
 #lb-next:hover{transform:translateY(-50%) translateX(-3px);}
 
 /* ── AUTH ── */
@@ -519,27 +486,20 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
 #terms-overlay{
   position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.82);
   display:flex;align-items:flex-end;justify-content:center;
-  opacity:0;pointer-events:none;transition:opacity 0.25s;
-  padding:0;
+  opacity:0;pointer-events:none;transition:opacity 0.25s;padding:0;
 }
 #terms-overlay.show{opacity:1;pointer-events:all;}
 #terms-box{
   background:linear-gradient(170deg,var(--dark-3) 0%,var(--dark-2) 100%);
-  border:1px solid var(--border-pk);
-  border-radius:22px 22px 0 0;
-  width:100%;max-width:640px;
-  max-height:88vh;
-  overflow-y:auto;
+  border:1px solid var(--border-pk);border-radius:22px 22px 0 0;
+  width:100%;max-width:640px;max-height:88vh;overflow-y:auto;
   padding:1.8rem 1.5rem 2.5rem;
   transform:translateY(100%);
   transition:transform 0.32s cubic-bezier(.34,1.2,.64,1);
   box-shadow:0 -20px 60px rgba(0,0,0,0.7),0 0 40px rgba(233,30,140,0.08);
 }
 #terms-overlay.show #terms-box{transform:translateY(0);}
-.terms-title{
-  font-family:'Playfair Display',serif;font-size:1.4rem;font-style:italic;
-  color:#fff;margin-bottom:0.35rem;display:flex;align-items:center;gap:0.6rem;
-}
+.terms-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-style:italic;color:#fff;margin-bottom:0.35rem;display:flex;align-items:center;gap:0.6rem;}
 .terms-body{font-size:0.88rem;color:var(--text-2);line-height:1.78;display:flex;flex-direction:column;gap:1rem;}
 .terms-body h3{font-size:0.82rem;font-weight:800;letter-spacing:0.07em;text-transform:uppercase;color:var(--pink-4);margin-bottom:-0.4rem;}
 .shield-btn{
@@ -547,17 +507,103 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
   display:inline-flex;align-items:center;gap:0.4rem;
   color:var(--text-2);font-size:0.8rem;font-weight:700;font-family:'Nunito',sans-serif;
   padding:0.3rem 0.6rem;border-radius:var(--radius-sm);
-  transition:color 0.15s,background 0.15s;
-  border:1px solid var(--border);
+  transition:color 0.15s,background 0.15s;border:1px solid var(--border);
 }
 .shield-btn:hover{color:var(--pink-4);background:rgba(233,30,140,0.08);border-color:var(--border-pk);}
-
 .form-section{background:linear-gradient(170deg,var(--dark-3) 0%,var(--dark-2) 100%);border-radius:var(--radius);border:1px solid var(--border);padding:1.75rem;box-shadow:var(--shadow);}
 .form-section-title{font-size:1.5rem;color:var(--pink-4);font-style:italic;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
 
-/* ── LAZY IMAGE ── */
-img[data-src]{opacity:0;transition:opacity 0.4s ease;}
-img.loaded{opacity:1;}
+/* ══════════════════════════════════════════════════
+   CONTADOR DE VISITANTES — barra fija al fondo
+══════════════════════════════════════════════════ */
+#visitor-counter{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  z-index:200;
+  /* gradiente de abajo: fondo oscuro semitransparente */
+  background:linear-gradient(0deg,rgba(8,0,6,0.97) 0%,rgba(14,0,10,0.88) 100%);
+  border-top:1px solid rgba(233,30,140,0.35);
+  box-shadow:0 -4px 32px rgba(233,30,140,0.18),0 -1px 0 rgba(233,30,140,0.12);
+  backdrop-filter:blur(18px);
+  padding:0.55rem 1.2rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0.8rem;
+  /* oculto al inicio, aparece con animación */
+  opacity:0;
+  transform:translateY(100%);
+  transition:opacity 0.5s ease, transform 0.5s cubic-bezier(.34,1.2,.64,1);
+}
+#visitor-counter.vc-show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* Pulso de punto verde "en vivo" */
+.vc-dot{
+  width:9px;height:9px;border-radius:50%;
+  background:#ff5cc8;
+  box-shadow:0 0 0 0 rgba(255,92,200,0.6);
+  animation:vc-pulse 1.8s ease-out infinite;
+  flex-shrink:0;
+}
+@keyframes vc-pulse{
+  0%  { box-shadow:0 0 0 0   rgba(255,92,200,0.7); }
+  60% { box-shadow:0 0 0 9px rgba(255,92,200,0);   }
+  100%{ box-shadow:0 0 0 0   rgba(255,92,200,0);   }
+}
+
+.vc-label{
+  font-size:0.72rem;font-weight:800;letter-spacing:0.13em;
+  text-transform:uppercase;color:var(--muted);
+  white-space:nowrap;
+}
+
+.vc-number{
+  font-family:'Playfair Display',serif;
+  font-size:1.45rem;font-weight:700;font-style:italic;
+  color:#fff;
+  text-shadow:0 0 18px rgba(255,92,200,0.7),0 0 40px rgba(233,30,140,0.5);
+  line-height:1;
+  /* número animado */
+  transition:color 0.3s;
+}
+/* partículas de brillo alrededor del número */
+.vc-glow{
+  position:relative;display:inline-block;
+}
+.vc-glow::before{
+  content:'';
+  position:absolute;inset:-6px;
+  background:radial-gradient(ellipse at center,rgba(255,92,200,0.22) 0%,transparent 70%);
+  border-radius:50%;
+  pointer-events:none;
+  animation:vc-glow-pulse 2.4s ease-in-out infinite alternate;
+}
+@keyframes vc-glow-pulse{
+  0%  { opacity:0.5; transform:scale(0.95); }
+  100%{ opacity:1.0; transform:scale(1.05); }
+}
+
+.vc-suffix{
+  font-size:0.7rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--pink-4);
+  text-shadow:0 0 10px rgba(255,92,200,0.5);
+  white-space:nowrap;
+}
+
+/* separador vertical decorativo */
+.vc-sep{
+  width:1px;height:28px;
+  background:linear-gradient(180deg,transparent,rgba(255,92,200,0.4),transparent);
+  flex-shrink:0;
+}
+
+/* ── Padding extra al fondo del screen-list para que el contador no tape contenido ── */
+#screen-list > div {
+  padding-bottom: 4rem;
+}
 </style>
 </head>
 <body>
@@ -623,7 +669,6 @@ img.loaded{opacity:1;}
             <button class="btn btn-blue"  style="flex:1" onclick="navigate('screen-register')">Crear Cuenta</button>
           </div>
           <div class="divider">o continúa como</div>
-          <!-- FIX 1: Manita 👈 al lado DERECHO, apuntando hacia el botón -->
           <div class="visitor-wrapper">
             <button class="btn btn-visitor btn-full btn-lg" onclick="enterVisitor()" style="flex:1">VISITANTE SOLAMENTE</button>
             <span class="visitor-hand">👈</span>
@@ -791,13 +836,9 @@ img.loaded{opacity:1;}
       <h2 class="form-section-title" style="display:flex;align-items:center;gap:0.6rem;color:#ffffff">
         💰 Precios de Servicios
       </h2>
-      <div id="prices-content" style="display:flex;flex-direction:column;gap:1.5rem">
-        <!-- Populated dynamically by openPrices() -->
-      </div>
+      <div id="prices-content" style="display:flex;flex-direction:column;gap:1.5rem"></div>
       <div style="padding-top:1.2rem">
-        <button class="btn btn-yellow btn-lg btn-full" onclick="history.back()">
-          Volver
-        </button>
+        <button class="btn btn-yellow btn-lg btn-full" onclick="history.back()">Volver</button>
       </div>
     </div>
   </div>
@@ -812,27 +853,19 @@ img.loaded{opacity:1;}
     </div>
     <div class="terms-body">
       <p>Bienvenido a <strong style="color:var(--pink-4)">E-legirs</strong>. Al acceder y utilizar esta plataforma, aceptas los siguientes términos y condiciones en su totalidad. Te recomendamos leerlos con atención.</p>
-
       <h3>1. Naturaleza de la plataforma</h3>
       <p>E-legirs es una plataforma digital independiente operada por un equipo de trabajo autónomo. <strong>No somos ni pertenecemos a ninguna empresa, corporación, asociación, organización o entidad con personalidad jurídica registrada.</strong> Operamos exclusivamente como un equipo de personas enfocado en el desarrollo y mantenimiento de herramientas digitales.</p>
-
       <h3>2. Objetivo y alcance</h3>
       <p>Nuestro único objetivo es <strong>brindar al usuario herramientas digitales</strong> que faciliten la búsqueda y presentación de perfiles de manera más eficaz, organizada y accesible. No promovemos, coordinamos ni participamos en ninguna actividad comercial entre los usuarios de la plataforma.</p>
-
       <h3>3. Exención de cobros y pagos</h3>
       <p>E-legirs se deslinda expresamente de <strong>cualquier transacción económica, cobro, pago o acuerdo comercial</strong> que pueda generarse entre los usuarios. El uso de esta aplicación web es completamente ajeno a cualquier tipo de contraprestación económica hacia nuestra plataforma. Los servicios, tarifas o acuerdos que puedan existir entre usuarios son responsabilidad exclusiva de las partes involucradas.</p>
-
       <h3>4. Verificación de perfiles</h3>
       <p>Uno de nuestros compromisos fundamentales es <strong>garantizar la autenticidad de los perfiles publicados</strong>. Cada perfil que aparece con la insignia de <em style="color:#86efac">✔ Verificado</em> ha pasado por un proceso de validación interno para confirmar que se trata de una persona real. Sin embargo, E-legirs no se hace responsable por el contenido, comportamiento o acciones de los usuarios fuera de la plataforma.</p>
-
       <h3>5. Responsabilidad del usuario</h3>
       <p>El usuario acepta utilizar la plataforma de forma responsable y conforme a las leyes aplicables en su lugar de residencia. Cualquier uso indebido, fraudulento o contrario a estos términos podrá resultar en la suspensión del acceso sin previo aviso.</p>
-
       <h3>6. Modificaciones</h3>
       <p>E-legirs se reserva el derecho de actualizar estos términos en cualquier momento. Los cambios entrarán en vigor en el momento de su publicación en la plataforma.</p>
-
       <p style="font-size:0.78rem;color:var(--muted);border-top:1px solid var(--border);padding-top:0.9rem;margin-top:0.4rem">Última actualización: 2025 · E-legirs · Plataforma digital independiente</p>
-
       <button class="btn btn-pink btn-lg" style="width:100%;margin-top:0.5rem" onclick="closeTerms()">Entendido, continuar</button>
     </div>
   </div>
@@ -847,13 +880,26 @@ img.loaded{opacity:1;}
   </div>
 </div>
 
-<!-- ── LIGHTBOX con navegación (FIX 2) ── -->
+<!-- ── LIGHTBOX ── -->
 <div id="lightbox" onclick="closeLightbox()">
   <button id="lightbox-close" onclick="closeLightbox()">✕</button>
-  <!-- FIX 2: botones pegados a los bordes laterales -->
   <button id="lb-prev" class="lb-nav" onclick="event.stopPropagation();lbNavigate(-1)">&#8249;</button>
   <img id="lightbox-img" src="" alt="Foto ampliada" onclick="event.stopPropagation()">
   <button id="lb-next" class="lb-nav" onclick="event.stopPropagation();lbNavigate(1)">&#8250;</button>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     CONTADOR DE VISITANTES — fijo al pie
+══════════════════════════════════════════════ -->
+<div id="visitor-counter">
+  <span class="vc-dot"></span>
+  <span class="vc-label">Visitante&nbsp;N.°</span>
+  <span class="vc-sep"></span>
+  <span class="vc-glow">
+    <span class="vc-number" id="vc-num">0</span>
+  </span>
+  <span class="vc-sep"></span>
+  <span class="vc-suffix">🔥 en línea hoy</span>
 </div>
 
 <script>
@@ -876,46 +922,144 @@ let currentUser = null, isVisitor = false, profilesData = [], editingId = null;
 const $ = id => document.getElementById(id);
 const RX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/* ── Lazy Image Loader — optimizado ── */
-// rootMargin amplio: pre-carga imágenes 400px antes de que sean visibles
+/* ══════════════════════════════════════════════════
+   CONTADOR DE VISITANTES — lógica
+══════════════════════════════════════════════════ */
+(function initVisitorCounter() {
+  const STORAGE_KEY = 'elegirs_visitor_num';
+  const MIN = 1700, MAX = 2500;
+
+  // Si ya existe un número guardado en esta sesión, reutilizarlo
+  // (para que no cambie al refrescar en la misma sesión)
+  let num = sessionStorage.getItem(STORAGE_KEY);
+  if (!num) {
+    // Número base aleatorio entre MIN y MAX
+    num = Math.floor(Math.random() * (MAX - MIN + 1)) + MIN;
+    sessionStorage.setItem(STORAGE_KEY, num);
+  } else {
+    num = parseInt(num);
+  }
+
+  // Animación de conteo desde 0 hasta el número objetivo
+  const el = document.getElementById('vc-num');
+  const counter = document.getElementById('visitor-counter');
+
+  // Mostrar el contador después de un pequeño delay
+  setTimeout(() => {
+    counter.classList.add('vc-show');
+    // Animar el número contando hacia arriba
+    const duration = 1800; // ms
+    const start    = performance.now();
+    const startVal = Math.max(0, num - Math.floor(num * 0.12)); // empieza desde ~88% del número
+
+    function tick(now) {
+      const elapsed  = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Easing: ease-out cúbico
+      const eased    = 1 - Math.pow(1 - progress, 3);
+      const current  = Math.floor(startVal + (num - startVal) * eased);
+      el.textContent = current.toLocaleString('es-MX');
+      if (progress < 1) requestAnimationFrame(tick);
+      else el.textContent = num.toLocaleString('es-MX');
+    }
+    requestAnimationFrame(tick);
+  }, 900);
+})();
+
+/* ══════════════════════════════════════════════════
+   CARGA DE IMÁGENES OPTIMIZADA
+   - Skeleton shimmer mientras carga
+   - IntersectionObserver con rootMargin generoso
+   - Retry automático con backoff si falla (hasta 3 intentos)
+   - Fallback elegante sin texto "foto no disponible"
+══════════════════════════════════════════════════ */
+const PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='270' viewBox='0 0 400 270'%3E%3Crect width='400' height='270' fill='%231c1c1c'/%3E%3Ccircle cx='200' cy='110' r='30' fill='%23303030'/%3E%3Cellipse cx='200' cy='190' rx='55' ry='35' fill='%23303030'/%3E%3C/svg%3E";
+
+// Convierte la URL de Supabase Storage para añadir parámetros de caché busting
+// y evitar imágenes cortadas por timeouts de CDN
+function buildImgUrl(src) {
+  if (!src || src.startsWith('data:')) return src;
+  try {
+    const url = new URL(src);
+    // Añadir transform de Supabase Image para optimizar tamaño en cards
+    // width=400 suficiente para grid de 270px, quality=75 reduce peso
+    if (url.hostname.includes('supabase')) {
+      url.searchParams.set('width',  '400');
+      url.searchParams.set('quality','80');
+      url.searchParams.set('resize', 'cover');
+    }
+    return url.toString();
+  } catch {
+    return src;
+  }
+}
+
+// Carga una imagen con reintentos automáticos
+function loadImgWithRetry(imgEl, src, maxRetries = 3) {
+  let attempt = 0;
+  const skelEl = imgEl.previousElementSibling; // el div skeleton
+
+  function tryLoad() {
+    const probe = new Image();
+    probe.onload = () => {
+      imgEl.src = probe.src;
+      imgEl.classList.add('img-loaded');
+      if (skelEl && skelEl.classList.contains('card-img-skeleton')) {
+        skelEl.style.display = 'none';
+      }
+    };
+    probe.onerror = () => {
+      attempt++;
+      if (attempt < maxRetries) {
+        // Backoff: 600ms, 1400ms, 2800ms
+        setTimeout(tryLoad, 600 * Math.pow(2, attempt - 1));
+      } else {
+        // Fallback: mostrar silueta, no texto de error
+        imgEl.src = PLACEHOLDER;
+        imgEl.classList.add('img-loaded');
+        if (skelEl && skelEl.classList.contains('card-img-skeleton')) {
+          skelEl.style.display = 'none';
+        }
+      }
+    };
+    probe.src = src + (src.includes('?') ? '&' : '?') + '_t=' + Date.now();
+  }
+  tryLoad();
+}
+
+// IntersectionObserver mejorado: rootMargin 500px para pre-cargar antes de ver
 const imgObserver = typeof IntersectionObserver !== 'undefined'
   ? new IntersectionObserver((entries) => {
       entries.forEach(e => {
-        if (e.isIntersecting) {
-          const img = e.target;
-          const src = img.dataset.src;
-          if (!src) return;
-          // Pre-load en objeto Image para que el browser cachee antes de asignar al DOM
-          const preloader = new Image();
-          preloader.onload = () => {
-            img.src = src;
-            img.classList.add('loaded');
-          };
-          preloader.onerror = () => {
-            img.src = PLACEHOLDER;
-            img.classList.add('loaded');
-          };
-          preloader.src = src;
-          imgObserver.unobserve(img);
-        }
+        if (!e.isIntersecting) return;
+        const img = e.target;
+        const src = img.dataset.lazySrc;
+        if (!src) return;
+        imgObserver.unobserve(img);
+        loadImgWithRetry(img, buildImgUrl(src));
       });
-    }, { rootMargin: '400px 0px', threshold: 0 })
+    }, { rootMargin: '500px 0px', threshold: 0 })
   : null;
 
-const PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%231c1c1c'/%3E%3Ctext x='200' y='160' font-size='36' text-anchor='middle' fill='%23444'%3ESin Foto%3C/text%3E%3C/svg%3E";
-
-function lazyImg(src, cls, alt, style) {
-  const s = style ? ` style="${style}"` : '';
-  if (imgObserver) {
-    return `<img data-src="${src}" src="${PLACEHOLDER}" class="${cls} loaded" alt="${alt}"${s} loading="lazy">`;
-  }
-  return `<img src="${src}" class="${cls}" alt="${alt}"${s} onerror="this.src='${PLACEHOLDER}'" loading="lazy">`;
-}
 function observeLazy() {
   if (!imgObserver) return;
-  document.querySelectorAll('img[data-src]').forEach(img => {
-    if (!img.dataset.observed) { imgObserver.observe(img); img.dataset.observed = '1'; }
+  document.querySelectorAll('img[data-lazy-src]').forEach(img => {
+    if (!img.dataset.observed) {
+      imgObserver.observe(img);
+      img.dataset.observed = '1';
+    }
   });
+}
+
+// Genera HTML de imagen con skeleton debajo
+function cardImgHtml(src, name) {
+  const optimizedSrc = src && !src.startsWith('data:') ? src : null;
+  if (!optimizedSrc) {
+    return `<div class="card-img-skeleton" style="display:none"></div>
+            <img class="card-img img-loaded" src="${PLACEHOLDER}" alt="${name}">`;
+  }
+  return `<div class="card-img-skeleton"></div>
+          <img class="card-img" data-lazy-src="${optimizedSrc}" src="${PLACEHOLDER}" alt="${name}">`;
 }
 
 /* ── Eye Toggle ── */
@@ -926,7 +1070,6 @@ function toggleEye(id, btn) {
   el.type = p ? 'text' : 'password';
   btn.innerHTML = p ? SVG_EYE_OFF : SVG_EYE_ON;
 }
-
 function styleRememberBox(cb) {
   cb.style.background  = cb.checked ? 'var(--pink-3)' : 'transparent';
   cb.style.borderColor = cb.checked ? 'var(--pink-3)' : 'rgba(255,92,200,0.5)';
@@ -957,10 +1100,8 @@ function modal(type, msg, btns) {
 function closeModal() { $('modal-overlay').classList.remove('show'); }
 $('modal-overlay').addEventListener('click', e => { if (e.target === $('modal-overlay')) closeModal(); });
 
-/* ── LIGHTBOX con navegación ── */
-let lbPhotos = [];
-let lbIndex  = 0;
-
+/* ── LIGHTBOX ── */
+let lbPhotos = [], lbIndex = 0;
 function openLightbox(src, photosArr) {
   lbPhotos = photosArr || [src];
   lbIndex  = lbPhotos.indexOf(src);
@@ -968,140 +1109,83 @@ function openLightbox(src, photosArr) {
   _lbShow();
   document.body.style.overflow = 'hidden';
 }
-
 function _lbShow() {
   $('lightbox-img').src = lbPhotos[lbIndex];
-  const prev = $('lb-prev');
-  const next = $('lb-next');
-  if (lbPhotos.length <= 1) {
-    prev.classList.add('hidden');
-    next.classList.add('hidden');
-  } else {
-    prev.classList.toggle('hidden', lbIndex === 0);
-    next.classList.toggle('hidden', lbIndex === lbPhotos.length - 1);
-  }
+  const prev = $('lb-prev'), next = $('lb-next');
+  if (lbPhotos.length <= 1) { prev.classList.add('hidden'); next.classList.add('hidden'); }
+  else { prev.classList.toggle('hidden', lbIndex === 0); next.classList.toggle('hidden', lbIndex === lbPhotos.length - 1); }
   $('lightbox').classList.add('show');
 }
-
 function lbNavigate(dir) {
   const newIdx = lbIndex + dir;
   if (newIdx < 0 || newIdx >= lbPhotos.length) return;
   lbIndex = newIdx;
   const img = $('lightbox-img');
-  img.style.opacity = '0';
-  img.style.transform = 'scale(0.92)';
+  img.style.opacity = '0'; img.style.transform = 'scale(0.92)';
   setTimeout(() => {
-    img.src = lbPhotos[lbIndex];
-    img.style.opacity = '1';
-    img.style.transform = 'scale(1)';
+    img.src = lbPhotos[lbIndex]; img.style.opacity = '1'; img.style.transform = 'scale(1)';
     $('lb-prev').classList.toggle('hidden', lbIndex === 0);
     $('lb-next').classList.toggle('hidden', lbIndex === lbPhotos.length - 1);
   }, 140);
 }
-
 function closeLightbox() {
   $('lightbox').classList.remove('show');
   document.body.style.overflow = '';
-  setTimeout(() => {
-    $('lightbox-img').src = '';
-    lbPhotos = [];
-    lbIndex  = 0;
-  }, 300);
+  setTimeout(() => { $('lightbox-img').src = ''; lbPhotos = []; lbIndex = 0; }, 300);
 }
-
 document.addEventListener('keydown', e => {
   if (!$('lightbox').classList.contains('show')) return;
-  if (e.key === 'Escape')     closeLightbox();
+  if (e.key === 'Escape') closeLightbox();
   if (e.key === 'ArrowLeft')  lbNavigate(-1);
   if (e.key === 'ArrowRight') lbNavigate(1);
 });
-
 document.addEventListener('DOMContentLoaded', () => {
   const img = $('lightbox-img');
   if (img) img.style.transition = 'opacity 0.14s ease, transform 0.26s cubic-bezier(.34,1.46,.64,1)';
 });
 
-/* ============================================================
-   FIX 4 + FIX 5: SISTEMA DE NAVEGACIÓN CON HISTORY API
-   - Sincroniza el botón Atrás del dispositivo Android
-   - Mantiene la sesión correctamente (no redirige al login innecesariamente)
-============================================================ */
-
-// Mapa de pantallas con sus "niveles" de profundidad
-const SCREEN_DEPTH = {
-  'screen-login':    0,
-  'screen-register': 1,
-  'screen-list':     1,
-  'screen-form':     2,
-  'screen-detail':   2,
-  'screen-prices':   3,
-};
-
+/* ── NAVEGACIÓN CON HISTORY API ── */
 let currentScreen = null;
 let _ignorePopstate = false;
 
-/**
- * navigate(screenId)
- * Usa pushState para añadir cada pantalla al historial del navegador.
- * El botón Atrás del Android hará popstate y nosotros decidimos a dónde ir.
- */
 function navigate(screenId, replace = false) {
   if (currentScreen === screenId) return;
   currentScreen = screenId;
-
-  // Actualizar historial del navegador
   const state = { screen: screenId };
-  if (replace) {
-    history.replaceState(state, '', '#' + screenId);
-  } else {
-    history.pushState(state, '', '#' + screenId);
-  }
-
+  if (replace) history.replaceState(state, '', '#' + screenId);
+  else         history.pushState(state, '', '#' + screenId);
   _applyScreen(screenId);
 }
 
 function _applyScreen(screenId) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   $(screenId).classList.add('active');
-
   const isAuth = screenId === 'screen-login' || screenId === 'screen-register';
   $('main-navbar').style.display = isAuth ? 'none' : 'flex';
-
+  // Mostrar/ocultar el contador solo en la pantalla de lista
+  const vc = $('visitor-counter');
+  if (vc) vc.style.display = (screenId === 'screen-list') ? 'flex' : 'none';
   if (screenId === 'screen-list') loadProfiles();
   window.scrollTo(0, 0);
 }
 
-// Mantener compatibilidad con llamadas a showScreen() existentes
 function showScreen(id) { navigate(id); }
 
-// FIX 5: Escuchar el botón Atrás del dispositivo Android / navegador
 window.addEventListener('popstate', (e) => {
   if (_ignorePopstate) { _ignorePopstate = false; return; }
-
-  // Si hay lightbox abierto, cerrarlo primero
   if ($('lightbox').classList.contains('show')) {
     closeLightbox();
-    // Volver a meter el estado actual al historial para que el siguiente atrás funcione
     history.pushState({ screen: currentScreen }, '', '#' + currentScreen);
     return;
   }
-
   const targetScreen = e.state?.screen;
-
   if (!targetScreen) {
-    // No hay estado, ir al inicio según sesión
     const dest = (currentUser || isVisitor) ? 'screen-list' : 'screen-login';
-    navigate(dest, true);
-    return;
+    navigate(dest, true); return;
   }
-
-  // FIX 4: Si el retroceso lleva al login pero el usuario tiene sesión activa, ignorarlo
   if (targetScreen === 'screen-login' && (currentUser || isVisitor)) {
-    // El usuario está logueado, no mandarlo al login; en cambio salir de la app
-    history.back(); // deja que el navegador maneje la salida real
-    return;
+    history.back(); return;
   }
-
   currentScreen = targetScreen;
   _applyScreen(targetScreen);
 });
@@ -1121,38 +1205,24 @@ function updateNav() {
 
 /* ── Auth ── */
 async function handleLogin() {
-  const email    = $('li-email').value.trim();
-  const pass     = $('li-pass').value;
+  const email = $('li-email').value.trim(), pass = $('li-pass').value;
   const remember = $('li-remember') ? $('li-remember').checked : false;
-
   if (!email || !pass)       { modal('warning','Ingresa tu correo y contraseña.'); return; }
   if (!RX_EMAIL.test(email)) { modal('error','El formato del correo no es válido.'); return; }
   if (!sb)                   { modal('error','Agrega tus claves de Supabase en el script.'); return; }
-
   modal('info','Iniciando sesión...');
   try {
     const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
     closeModal();
-
     if (error) {
       let m = 'Error al iniciar sesión.';
       if (/invalid.*credentials|Invalid login/i.test(error.message)) m = 'Correo o contraseña incorrectos.';
       else if (/not.*confirm/i.test(error.message)) m = 'Confirma tu correo antes de ingresar.';
       modal('error', m); return;
     }
-
-    // FIX 4: Si NO marcó "mantener sesión", limpiar la sesión al cerrar
-    if (!remember) {
-      // Supabase ya maneja persistSession:true, pero al no querer recordar,
-      // eliminamos el token guardado para que al reabrir la app pida login
-      localStorage.removeItem('leon-gto-session');
-    }
-
-    currentUser = data.user;
-    isVisitor   = false;
-    updateNav();
-    navigate('screen-list');
-
+    if (!remember) localStorage.removeItem('leon-gto-session');
+    currentUser = data.user; isVisitor = false;
+    updateNav(); navigate('screen-list');
   } catch(e) { closeModal(); modal('error','Error inesperado.'); }
 }
 
@@ -1169,9 +1239,7 @@ async function handleRegister() {
     closeModal();
     if (error) {
       let m = 'Error al crear la cuenta.';
-      if (/already.*registered|User already|email.*taken|already.*use/i.test(error.message)) {
-        m = 'Este correo ya está registrado. Intenta iniciar sesión.';
-      }
+      if (/already.*registered|User already|email.*taken|already.*use/i.test(error.message)) m = 'Este correo ya está registrado.';
       modal('error', m); return;
     }
     if (data?.user && data.user.identities && data.user.identities.length === 0) {
@@ -1185,9 +1253,9 @@ async function handleRegister() {
 
 async function handleForgot() {
   const email = $('li-email').value.trim();
-  if (!email)               { modal('warning','Escribe tu correo arriba para recuperar tu contraseña.'); return; }
-  if (!RX_EMAIL.test(email)){ modal('error','Formato de correo inválido.'); return; }
-  if (!sb)                  { modal('error','Supabase no configurado.'); return; }
+  if (!email)                { modal('warning','Escribe tu correo arriba para recuperar tu contraseña.'); return; }
+  if (!RX_EMAIL.test(email)) { modal('error','Formato de correo inválido.'); return; }
+  if (!sb)                   { modal('error','Supabase no configurado.'); return; }
   try {
     const { error } = await sb.auth.resetPasswordForEmail(email);
     if (error) { modal('error','No se pudo enviar el correo de recuperación.'); return; }
@@ -1196,10 +1264,8 @@ async function handleForgot() {
 }
 
 function enterVisitor() {
-  currentUser = null;
-  isVisitor   = true;
-  updateNav();
-  navigate('screen-list');
+  currentUser = null; isVisitor = true;
+  updateNav(); navigate('screen-list');
 }
 
 function handleLogout() {
@@ -1208,9 +1274,7 @@ function handleLogout() {
       closeModal();
       if (sb) await sb.auth.signOut();
       localStorage.removeItem('leon-gto-session');
-      currentUser = null;
-      isVisitor   = false;
-      // Reemplazar el historial completo para que el Atrás no vuelva a la app
+      currentUser = null; isVisitor = false;
       history.replaceState({ screen: 'screen-login' }, '', '#screen-login');
       _applyScreen('screen-login');
       currentScreen = 'screen-login';
@@ -1219,28 +1283,19 @@ function handleLogout() {
   ]);
 }
 
-/* ── Profiles Load ── */
-/* ── Cache de perfiles en memoria ── */
-let profilesCache = null;      // datos cacheados
-let profilesCacheTs = 0;       // timestamp del último fetch
-const CACHE_TTL = 60 * 1000;  // 60 segundos antes de re-fetch
+/* ── Cache de perfiles ── */
+let profilesCache = null, profilesCacheTs = 0;
+const CACHE_TTL = 60 * 1000;
 
 async function loadProfiles(forceRefresh = false) {
   const grid=$('profiles-grid'), loading=$('list-loading'), empty=$('list-empty');
-
-  // Si hay caché reciente y no forzamos refresh, renderizar de inmediato
   const now = Date.now();
   if (!forceRefresh && profilesCache && (now - profilesCacheTs) < CACHE_TTL) {
-    loading.style.display = 'none';
-    empty.style.display   = 'none';
+    loading.style.display = 'none'; empty.style.display = 'none';
     profilesData = profilesCache;
-    _renderGrid(grid, empty);
-    return;
+    _renderGrid(grid, empty); return;
   }
-
-  // Sin caché: mostrar spinner y hacer fetch
   grid.style.display='none'; empty.style.display='none'; loading.style.display='block';
-
   if (!sb) {
     loading.style.display='none'; empty.style.display='block';
     $('list-empty-msg').textContent='Configura Supabase para ver los perfiles.'; return;
@@ -1248,13 +1303,11 @@ async function loadProfiles(forceRefresh = false) {
   try {
     const { data, error } = await sb.from('profiles')
       .select('id,user_id,name,age,location,description,phone,prices,main_photo_url,ref_photo_1_url,ref_photo_2_url,ref_photo_3_url,created_at')
-      .order('location',{ascending:true})
-      .order('name',{ascending:true});
+      .order('location',{ascending:true}).order('name',{ascending:true});
     loading.style.display = 'none';
     if (error) throw error;
-    profilesData    = data || [];
-    profilesCache   = profilesData;
-    profilesCacheTs = Date.now();
+    profilesData = data || [];
+    profilesCache = profilesData; profilesCacheTs = Date.now();
     _renderGrid(grid, empty);
   } catch(e) {
     loading.style.display='none'; empty.style.display='block';
@@ -1270,20 +1323,18 @@ function _renderGrid(grid, empty) {
   const frag = document.createDocumentFragment();
   profilesData.forEach(p => frag.appendChild(buildCard(p)));
   grid.appendChild(frag);
-  // Pequeño delay para que el DOM pinte antes de lanzar el observer
   requestAnimationFrame(() => observeLazy());
 }
 
-/* ── FIX 3: SVG del badge verificado ── */
+/* ── Badge verificado ── */
 const VERIFIED_SVG = `<svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 0.75L7.545 2.52L9.9 2.145L10.575 4.425L12.555 5.625L11.625 7.875L12.555 10.125L10.575 11.325L9.9 13.605L7.545 13.23L6 15L4.455 13.23L2.1 13.605L1.425 11.325L-0.555 10.125L0.375 7.875L-0.555 5.625L1.425 4.425L2.1 2.145L4.455 2.52L6 0.75Z" fill="rgba(74,222,128,0.25)" stroke="rgba(74,222,128,0.7)" stroke-width="0.5"/><path d="M3.8 6l1.4 1.4 2.8-2.8" stroke="#4ade80" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-
 function verifiedBadge() {
   return `<span class="verified-badge">${VERIFIED_SVG} Verificado</span>`;
 }
 
-/* ── Build Card ── */
+/* ── Build Card (con imagen optimizada) ── */
 function buildCard(p) {
-  const imgSrc  = p.main_photo_url || PLACEHOLDER;
+  const imgSrc  = p.main_photo_url || null;
   const phone   = (p.phone || '').replace(/\D/g,'');
   const el      = document.createElement('div');
   el.className  = 'profile-card';
@@ -1291,7 +1342,7 @@ function buildCard(p) {
 
   el.innerHTML = `
     <div class="card-img-wrap" onclick="viewProfile('${p.id}')">
-      ${lazyImg(imgSrc, 'card-img', p.name, '')}
+      ${cardImgHtml(imgSrc, p.name)}
     </div>
     <div class="card-body">
       <span class="card-name-label">Perfil</span>
@@ -1320,7 +1371,6 @@ function viewProfile(id) {
   const phone   = (p.phone || '').replace(/\D/g,'');
   const imgSrc  = p.main_photo_url || PLACEHOLDER;
   const refs    = [p.ref_photo_1_url, p.ref_photo_2_url, p.ref_photo_3_url].filter(Boolean);
-
   const allPhotos  = [imgSrc, ...refs];
   const photosJson = JSON.stringify(allPhotos).replace(/'/g, "\\'").replace(/"/g, '&quot;');
   const descEscaped = (p.description || '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -1328,19 +1378,13 @@ function viewProfile(id) {
 
   $('detail-content').innerHTML = `
     <div style="background:linear-gradient(175deg,var(--dark-3) 0%,var(--dark-2) 100%);">
-      <img
-        src="${PLACEHOLDER}" data-src="${imgSrc}"
-        class="detail-img" alt="${p.name}" loading="lazy"
+      <img src="${imgSrc}" class="detail-img" alt="${p.name}" loading="lazy"
         style="width:100%;height:420px;object-fit:cover;display:block;cursor:pointer"
         onclick="openLightbox('${imgSrc}', JSON.parse(this.dataset.photos))"
-        data-photos="${photosJson}"
-        onerror="this.src='${PLACEHOLDER}'">
+        data-photos="${photosJson}" onerror="this.src='${PLACEHOLDER}'">
       ${refs.length ? `
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;padding:0.75rem 1rem 0">
-        ${refs.map(src => `<img
-          src="${PLACEHOLDER}" data-src="${src}"
-          data-photos="${photosJson}"
-          alt="ref"
+        ${refs.map(src => `<img src="${src}" data-photos="${photosJson}" alt="ref"
           style="width:100%;height:110px;object-fit:cover;border-radius:9px;cursor:pointer;transition:transform 0.18s,box-shadow 0.18s;border:2px solid transparent;"
           loading="lazy"
           onclick="openLightbox('${src}', JSON.parse(this.dataset.photos))"
@@ -1351,7 +1395,6 @@ function viewProfile(id) {
       <div class="detail-body" style="border-radius:0">
         <div>
           <div class="detail-header-label">Perfil en E-legirs</div>
-          <!-- FIX 3: Nombre + insignia verificado en el detalle -->
           <div class="detail-name-row">
             <div class="detail-header-name">${p.name}</div>
             ${verifiedBadge()}
@@ -1380,7 +1423,6 @@ function viewProfile(id) {
     </div>`;
 
   navigate('screen-detail');
-  setTimeout(observeLazy, 50);
 }
 
 /* ── Prices ── */
@@ -1395,12 +1437,8 @@ function openPrices(profileId) {
     );
     return;
   }
-
   const p = profilesData.find(x => x.id === profileId);
-  const pricesText = (p && p.prices && p.prices.trim())
-    ? p.prices
-    : 'El dueño del perfil ha decidido no compartir esta información.';
-
+  const pricesText = (p && p.prices && p.prices.trim()) ? p.prices : 'El dueño del perfil ha decidido no compartir esta información.';
   const isDefault = pricesText === 'El dueño del perfil ha decidido no compartir esta información.';
 
   $('prices-content').innerHTML = `
@@ -1430,8 +1468,7 @@ function openNewProfile() {
   if (!currentUser) { modal('warning','Debes iniciar sesión para crear un perfil.'); return; }
   editingId = null;
   $('form-title').textContent = 'Crear Nuevo Perfil';
-  resetForm();
-  navigate('screen-form');
+  resetForm(); navigate('screen-form');
 }
 
 function openEdit(id) {
@@ -1439,34 +1476,27 @@ function openEdit(id) {
   const p = profilesData.find(x => x.id === id); if (!p) return;
   editingId = id;
   $('form-title').textContent = 'Editar Perfil';
-  $('f-name').value     = p.name        || '';
-  $('f-age').value      = p.age         || '';
-  $('f-desc').value     = p.description || '';
-  $('f-prices').value   = p.prices      || 'El dueño del perfil ha decidido no compartir esta información.';
-  $('f-phone').value    = p.phone       || '';
-  $('f-location').value = p.location    || '';
+  $('f-name').value = p.name || ''; $('f-age').value = p.age || '';
+  $('f-desc').value = p.description || '';
+  $('f-prices').value = p.prices || 'El dueño del perfil ha decidido no compartir esta información.';
+  $('f-phone').value = p.phone || ''; $('f-location').value = p.location || '';
   $('f-main-file').value = '';
   [1,2,3].forEach(n => { $(`f-ref${n}`).value = ''; });
   if (p.main_photo_url) $('f-main-prev').src = p.main_photo_url;
   [1,2,3].forEach(n => {
-    const url = p[`ref_photo_${n}_url`];
-    const img = $(`f-ref${n}-prev`);
-    const lbl = $(`f-ref${n}-lbl`);
+    const url = p[`ref_photo_${n}_url`], img = $(`f-ref${n}-prev`), lbl = $(`f-ref${n}-lbl`);
     if (url) { img.src = url; img.style.display = 'block'; lbl.style.display = 'none'; }
     else     { img.src = ''; img.style.display = 'none';  lbl.style.display = 'flex'; }
   });
   navigate('screen-form');
 }
 
-/* ── Save Profile ── */
 async function saveProfile() {
   if (!currentUser) { modal('error','No tienes sesión activa.'); return; }
-  const name     = $('f-name').value.trim();
-  const age      = $('f-age').value;
-  const desc     = $('f-desc').value.trim();
-  const phone    = $('f-phone').value.trim();
+  const name = $('f-name').value.trim(), age = $('f-age').value;
+  const desc = $('f-desc').value.trim(), phone = $('f-phone').value.trim();
   const location = ($('f-location').value.trim()) || '';
-  const prices   = $('f-prices').value.trim() || 'El dueño del perfil ha decidido no compartir esta información.';
+  const prices = $('f-prices').value.trim() || 'El dueño del perfil ha decidido no compartir esta información.';
   const mainFile = $('f-main-file').files[0];
 
   if (!name || !desc || !phone) { modal('warning','Completa Nombre, Descripción y Teléfono.'); return; }
@@ -1478,12 +1508,10 @@ async function saveProfile() {
   modal('info','Guardando perfil...');
   try {
     const existing = editingId ? profilesData.find(p => p.id === editingId) : null;
-    let mainUrl = existing?.main_photo_url  || '';
-    let ref1Url = existing?.ref_photo_1_url || '';
-    let ref2Url = existing?.ref_photo_2_url || '';
-    let ref3Url = existing?.ref_photo_3_url || '';
+    let mainUrl = existing?.main_photo_url || '', ref1Url = existing?.ref_photo_1_url || '';
+    let ref2Url = existing?.ref_photo_2_url || '', ref3Url = existing?.ref_photo_3_url || '';
 
-    if (mainFile)                mainUrl = await uploadFile(mainFile, `main/${currentUser.id}`);
+    if (mainFile) mainUrl = await uploadFile(mainFile, `main/${currentUser.id}`);
     const r1 = $('f-ref1').files[0]; if (r1) ref1Url = await uploadFile(r1, `ref/${currentUser.id}`);
     const r2 = $('f-ref2').files[0]; if (r2) ref2Url = await uploadFile(r2, `ref/${currentUser.id}`);
     const r3 = $('f-ref3').files[0]; if (r3) ref3Url = await uploadFile(r3, `ref/${currentUser.id}`);
@@ -1506,19 +1534,16 @@ async function saveProfile() {
     }
     closeModal();
     if (dbError) throw dbError;
-    profilesCache = null; // invalidar caché para que recargue al volver
+    profilesCache = null;
     modal('success', editingId ? 'Perfil actualizado con éxito.' : 'Perfil creado con éxito.', [
       {text:'Ver Directorio',cls:'btn-green',cb:()=>{closeModal();navigate('screen-list');}}
     ]);
     resetForm();
-  } catch(e) {
-    closeModal();
-    modal('error', `Error: ${e.message || 'Intenta de nuevo.'}`);
-  }
+  } catch(e) { closeModal(); modal('error', `Error: ${e.message || 'Intenta de nuevo.'}`); }
 }
 
 async function uploadFile(file, folder) {
-  const ext  = file.name.split('.').pop();
+  const ext = file.name.split('.').pop();
   const path = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2,7)}.${ext}`;
   const { error } = await sb.storage.from('profile-photos').upload(path, file, { upsert: true });
   if (error) throw error;
@@ -1538,7 +1563,7 @@ async function doDelete(id) {
   try {
     const { error } = await sb.from('profiles').delete().eq('id', id);
     if (error) throw error;
-    profilesCache = null; // invalidar caché
+    profilesCache = null;
     modal('success','Perfil eliminado.',[
       {text:'OK',cls:'btn-green',cb:()=>{closeModal();navigate('screen-list');}}
     ]);
@@ -1562,9 +1587,8 @@ function previewRef(input, n) {
 }
 function resetForm() {
   ['f-name','f-age','f-desc','f-phone'].forEach(id => $(id).value = '');
-  $('f-prices').value   = 'El dueño del perfil ha decidido no compartir esta información.';
-  $('f-location').value = '';
-  $('f-main-file').value = '';
+  $('f-prices').value = 'El dueño del perfil ha decidido no compartir esta información.';
+  $('f-location').value = ''; $('f-main-file').value = '';
   $('f-main-prev').src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23252525'/%3E%3Ctext x='200' y='155' font-size='40' text-anchor='middle' fill='%23555'%3E📷%3C/text%3E%3C/svg%3E";
   [1,2,3].forEach(n => {
     $(`f-ref${n}`).value = '';
@@ -1575,40 +1599,29 @@ function resetForm() {
   editingId = null;
 }
 
-/* ── Terms & Conditions ── */
-function openTerms() {
-  document.getElementById('terms-overlay').classList.add('show');
-  document.body.style.overflow = 'hidden';
-}
-function closeTerms() {
-  document.getElementById('terms-overlay').classList.remove('show');
-  document.body.style.overflow = '';
-}
+/* ── Terms ── */
+function openTerms() { document.getElementById('terms-overlay').classList.add('show'); document.body.style.overflow = 'hidden'; }
+function closeTerms() { document.getElementById('terms-overlay').classList.remove('show'); document.body.style.overflow = ''; }
 
-/* ── FIX 4: Init — Detectar sesión activa, NO redirigir al login si ya hay sesión ── */
+/* ── Init ── */
 async function init() {
+  // Ocultar contador hasta que esté en screen-list
+  const vc = $('visitor-counter');
+  if (vc) vc.style.display = 'none';
+
   if (sb) {
     try {
       const { data: { session } } = await sb.auth.getSession();
       if (session?.user) {
-        currentUser = session.user;
-        isVisitor   = false;
-        updateNav();
-        // Reemplazar el historial inicial con la pantalla correcta
-        navigate('screen-list', true);
-        return;
+        currentUser = session.user; isVisitor = false;
+        updateNav(); navigate('screen-list', true); return;
       }
     } catch(e) { console.warn('Session check error:', e); }
   }
-
-  // Sin sesión: verificar si venimos de un hash en la URL
   const hash = window.location.hash.replace('#', '');
   const validScreens = ['screen-login','screen-register','screen-list','screen-form','screen-detail','screen-prices'];
-  if (hash && validScreens.includes(hash) && hash !== 'screen-list') {
-    navigate(hash, true);
-  } else {
-    navigate('screen-login', true);
-  }
+  if (hash && validScreens.includes(hash) && hash !== 'screen-list') navigate(hash, true);
+  else navigate('screen-login', true);
 }
 
 window.onload = init;
