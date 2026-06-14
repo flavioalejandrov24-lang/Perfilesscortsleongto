@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>E-legirs</title>
+<!-- Preconectar al dominio de Supabase para acelerar carga de imágenes -->
+<link rel="preconnect" href="https://zvtfwavhfeqrnfzwrain.supabase.co" crossorigin>
+<link rel="dns-prefetch" href="https://zvtfwavhfeqrnfzwrain.supabase.co">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -562,7 +565,7 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
 
 .vc-number{
   font-family:'Playfair Display',serif;
-  font-size:1.45rem;font-weight:700;font-style:italic;
+  font-size:1.65rem;font-weight:700;font-style:italic;
   color:#fff;
   text-shadow:0 0 18px rgba(255,92,200,0.7),0 0 40px rgba(233,30,140,0.5);
   line-height:1;
@@ -623,9 +626,10 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
     E-legirs
   </div>
   <div class="navbar-right">
-    <button id="nav-new-btn"    class="btn btn-pink btn-sm"  onclick="openNewProfile()" style="display:none">+ New</button>
-    <button id="nav-logout-btn" class="btn btn-red btn-sm"   onclick="handleLogout()"   style="display:none">Salir</button>
-    <button id="nav-login-btn"  class="btn btn-ghost btn-sm" onclick="navigate('screen-login')" style="display:none">Iniciar Sesión</button>
+    <button id="nav-new-btn"      class="btn btn-pink btn-sm"  onclick="openNewProfile()"            style="display:none">+ New</button>
+    <button id="nav-logout-btn"   class="btn btn-red btn-sm"   onclick="handleLogout()"               style="display:none">Salir</button>
+    <button id="nav-register-btn" class="btn btn-blue btn-sm"  onclick="navigate('screen-register')"  style="display:none">Registrarme</button>
+    <button id="nav-login-btn"    class="btn btn-ghost btn-sm" onclick="navigate('screen-login')"      style="display:none">Iniciar Sesión</button>
   </div>
 </nav>
 
@@ -1038,7 +1042,7 @@ const imgObserver = typeof IntersectionObserver !== 'undefined'
         imgObserver.unobserve(img);
         loadImgWithRetry(img, buildImgUrl(src));
       });
-    }, { rootMargin: '500px 0px', threshold: 0 })
+    }, { rootMargin: '700px 0px', threshold: 0 })
   : null;
 
 function observeLazy() {
@@ -1184,6 +1188,7 @@ window.addEventListener('popstate', (e) => {
     navigate(dest, true); return;
   }
   if (targetScreen === 'screen-login' && (currentUser || isVisitor)) {
+    // Tiene sesión o es visitante: no mandar al login; salir de la app normalmente
     history.back(); return;
   }
   currentScreen = targetScreen;
@@ -1193,13 +1198,23 @@ window.addEventListener('popstate', (e) => {
 /* ── Navbar ── */
 function updateNav() {
   if (currentUser) {
-    $('nav-new-btn').style.display    = 'inline-flex';
-    $('nav-logout-btn').style.display = 'inline-flex';
-    $('nav-login-btn').style.display  = 'none';
+    // Usuario autenticado: mostrar New + Salir
+    $('nav-new-btn').style.display      = 'inline-flex';
+    $('nav-logout-btn').style.display   = 'inline-flex';
+    $('nav-register-btn').style.display = 'none';
+    $('nav-login-btn').style.display    = 'none';
+  } else if (isVisitor) {
+    // Visitante: mostrar Registrarme + Iniciar Sesión
+    $('nav-new-btn').style.display      = 'none';
+    $('nav-logout-btn').style.display   = 'none';
+    $('nav-register-btn').style.display = 'inline-flex';
+    $('nav-login-btn').style.display    = 'inline-flex';
   } else {
-    $('nav-new-btn').style.display    = 'none';
-    $('nav-logout-btn').style.display = 'none';
-    $('nav-login-btn').style.display  = 'inline-flex';
+    // Sin sesión en pantallas que muestran navbar
+    $('nav-new-btn').style.display      = 'none';
+    $('nav-logout-btn').style.display   = 'none';
+    $('nav-register-btn').style.display = 'none';
+    $('nav-login-btn').style.display    = 'inline-flex';
   }
 }
 
@@ -1603,7 +1618,7 @@ function resetForm() {
 function openTerms() { document.getElementById('terms-overlay').classList.add('show'); document.body.style.overflow = 'hidden'; }
 function closeTerms() { document.getElementById('terms-overlay').classList.remove('show'); document.body.style.overflow = ''; }
 
-/* ── Init ── */
+/* ── Init — SIEMPRE arranca en los perfiles ── */
 async function init() {
   // Ocultar contador hasta que esté en screen-list
   const vc = $('visitor-counter');
@@ -1613,15 +1628,21 @@ async function init() {
     try {
       const { data: { session } } = await sb.auth.getSession();
       if (session?.user) {
-        currentUser = session.user; isVisitor = false;
-        updateNav(); navigate('screen-list', true); return;
+        currentUser = session.user;
+        isVisitor   = false;
+        updateNav();
+        navigate('screen-list', true);
+        return;
       }
     } catch(e) { console.warn('Session check error:', e); }
   }
-  const hash = window.location.hash.replace('#', '');
-  const validScreens = ['screen-login','screen-register','screen-list','screen-form','screen-detail','screen-prices'];
-  if (hash && validScreens.includes(hash) && hash !== 'screen-list') navigate(hash, true);
-  else navigate('screen-login', true);
+
+  // Sin sesión activa → entrar como visitante automáticamente
+  // (el login solo se accede desde "Iniciar Sesión" en el navbar)
+  currentUser = null;
+  isVisitor   = true;
+  updateNav();
+  navigate('screen-list', true);
 }
 
 window.onload = init;
