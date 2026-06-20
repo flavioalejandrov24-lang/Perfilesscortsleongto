@@ -4,610 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>E-legirs</title>
-<!-- Preconectar al dominio de Supabase para acelerar carga de imágenes -->
+
+<!-- ════════════════════════════════════════════════
+     OPTIMIZACIÓN 1: Preconectar y precargar lo crítico
+     primero, ANTES de cualquier CSS/JS pesado
+════════════════════════════════════════════════ -->
 <link rel="preconnect" href="https://zvtfwavhfeqrnfzwrain.supabase.co" crossorigin>
 <link rel="dns-prefetch" href="https://zvtfwavhfeqrnfzwrain.supabase.co">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="logoperfilesapp.png" as="image">
+
+<!-- OPTIMIZACIÓN 2: CSS propio cargado antes que la fuente externa
+     (el navegador puede pintar la estructura mientras llega la tipografía) -->
+<link rel="stylesheet" href="styles.css">
+
+<!-- OPTIMIZACIÓN 3: font-display=swap ya estaba bien usado, se mantiene -->
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-:root {
-  --pink-1:    #8b0a50;
-  --pink-2:    #c2185b;
-  --pink-3:    #e91e8c;
-  --pink-4:    #ff5cc8;
-  --pink-soft: #ffaadd;
-  --pink-glow: rgba(233,30,140,0.40);
-  --dark-0:    #080808;
-  --dark-1:    #0e0e0e;
-  --dark-2:    #141414;
-  --dark-3:    #1c1c1c;
-  --dark-4:    #252525;
-  --dark-5:    #2e2e2e;
-  --surface:   #181818;
-  --border:    rgba(255,255,255,0.07);
-  --border-pk: rgba(233,30,140,0.28);
-  --text:      #f2e8ef;
-  --text-2:    #c9a8bd;
-  --muted:     #887080;
-  --shadow:    0 6px 28px rgba(0,0,0,0.55);
-  --shadow-pk: 0 6px 28px rgba(233,30,140,0.35);
-  --radius:    15px;
-  --radius-sm: 9px;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{font-family:'Nunito',sans-serif;background:var(--dark-1);min-height:100vh;color:var(--text);-webkit-tap-highlight-color:transparent;}
-body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:
-    radial-gradient(ellipse at 10% 0%,   rgba(233,30,140,0.13) 0%,transparent 50%),
-    radial-gradient(ellipse at 90% 100%, rgba(139,10,80,0.10)  0%,transparent 50%),
-    radial-gradient(ellipse at 50% 50%,  rgba(8,0,6,0.5)       0%,transparent 80%);
-}
-h1,h2,h3{font-family:'Playfair Display',serif;}
-.screen{display:none;}
-.screen.active{display:block;}
 
-/* ── NEON GLASS BUTTONS ── */
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:0.4rem;
-  font-family:'Nunito',sans-serif;font-weight:800;font-size:0.92rem;
-  padding:0.65rem 1.2rem;border:none;border-radius:var(--radius-sm);
-  cursor:pointer;transition:transform 0.15s,filter 0.15s,box-shadow 0.15s,background 0.2s;
-  text-decoration:none;white-space:nowrap;position:relative;overflow:hidden;
-  backdrop-filter:blur(10px);
-}
-.btn::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(255,255,255,0.13) 0%,rgba(255,255,255,0) 60%);
-  pointer-events:none;
-}
-.btn:hover{filter:brightness(1.2);transform:translateY(-2px);}
-.btn:active{transform:translateY(0) scale(0.97);filter:brightness(0.92);}
-.btn:disabled{opacity:0.4;pointer-events:none;}
-
-.btn-pink{
-  background:linear-gradient(135deg,rgba(255,92,200,0.22) 0%,rgba(233,30,140,0.38) 50%,rgba(194,24,91,0.45) 100%);
-  color:#ffb3e0;border:1px solid rgba(255,92,200,0.50);
-  box-shadow:0 0 18px rgba(233,30,140,0.35),0 4px 14px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.18);
-  text-shadow:0 0 10px rgba(233,30,140,0.6);
-}
-.btn-pink:hover{box-shadow:0 0 32px rgba(233,30,140,0.65),0 6px 20px rgba(0,0,0,0.5);}
-
-.btn-green{
-  background:linear-gradient(135deg,rgba(74,222,128,0.18) 0%,rgba(34,197,94,0.32) 50%,rgba(21,128,61,0.42) 100%);
-  color:#86efac;border:1px solid rgba(74,222,128,0.45);
-  box-shadow:0 0 18px rgba(34,197,94,0.30),0 4px 14px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.14);
-  text-shadow:0 0 10px rgba(34,197,94,0.5);
-}
-.btn-green:hover{box-shadow:0 0 30px rgba(34,197,94,0.55),0 6px 20px rgba(0,0,0,0.5);}
-
-.btn-red{
-  background:linear-gradient(135deg,rgba(248,113,113,0.18) 0%,rgba(239,68,68,0.32) 50%,rgba(185,28,28,0.42) 100%);
-  color:#fca5a5;border:1px solid rgba(248,113,113,0.45);
-  box-shadow:0 0 18px rgba(239,68,68,0.28),0 4px 14px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.12);
-  text-shadow:0 0 10px rgba(239,68,68,0.45);
-}
-.btn-red:hover{box-shadow:0 0 30px rgba(239,68,68,0.55),0 6px 20px rgba(0,0,0,0.5);}
-
-.btn-blue{
-  background:linear-gradient(135deg,rgba(96,165,250,0.18) 0%,rgba(59,130,246,0.32) 50%,rgba(29,78,216,0.42) 100%);
-  color:#93c5fd;border:1px solid rgba(96,165,250,0.45);
-  box-shadow:0 0 18px rgba(59,130,246,0.28),0 4px 14px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.12);
-  text-shadow:0 0 10px rgba(59,130,246,0.45);
-}
-.btn-blue:hover{box-shadow:0 0 30px rgba(59,130,246,0.55),0 6px 20px rgba(0,0,0,0.5);}
-
-.btn-wa{
-  background:linear-gradient(135deg,rgba(74,222,128,0.15) 0%,rgba(37,211,102,0.30) 50%,rgba(7,94,84,0.42) 100%);
-  color:#6ee7b7;border:1px solid rgba(37,211,102,0.45);
-  box-shadow:0 0 18px rgba(37,211,102,0.28),0 4px 14px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.12);
-  text-shadow:0 0 10px rgba(37,211,102,0.45);
-}
-.btn-wa:hover{box-shadow:0 0 30px rgba(37,211,102,0.55),0 6px 20px rgba(0,0,0,0.5);}
-
-.btn-orange{
-  background:linear-gradient(135deg,rgba(251,191,36,0.18) 0%,rgba(245,158,11,0.32) 50%,rgba(180,83,9,0.42) 100%);
-  color:#fcd34d;border:1px solid rgba(251,191,36,0.45);
-  box-shadow:0 0 18px rgba(245,158,11,0.28),0 4px 14px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.12);
-  text-shadow:0 0 10px rgba(245,158,11,0.4);
-}
-.btn-orange:hover{box-shadow:0 0 30px rgba(245,158,11,0.55),0 6px 20px rgba(0,0,0,0.5);}
-
-.btn-prices{
-  background:linear-gradient(135deg,rgba(255,92,200,0.10) 0%,rgba(233,30,140,0.18) 50%,rgba(194,24,91,0.22) 100%);
-  color:#ffb3e0;border:1px solid rgba(255,92,200,0.38);
-  box-shadow:0 0 14px rgba(233,30,140,0.18),0 4px 14px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.14);
-  text-shadow:0 0 10px rgba(233,30,140,0.45);
-  backdrop-filter:blur(12px);
-}
-.btn-prices:hover{box-shadow:0 0 26px rgba(233,30,140,0.40),0 6px 20px rgba(0,0,0,0.5);}
-
-.btn-yellow{
-  background:linear-gradient(135deg,rgba(251,191,36,0.14) 0%,rgba(234,179,8,0.24) 50%,rgba(161,98,7,0.32) 100%);
-  color:#fde68a;border:1px solid rgba(251,191,36,0.42);
-  box-shadow:0 0 14px rgba(234,179,8,0.22),0 4px 14px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.14);
-  text-shadow:0 0 8px rgba(234,179,8,0.5);
-  backdrop-filter:blur(12px);
-}
-.btn-yellow:hover{box-shadow:0 0 26px rgba(234,179,8,0.45),0 6px 20px rgba(0,0,0,0.5);}
-
-.btn-dark{
-  background:rgba(255,255,255,0.04);color:var(--text-2);
-  border:1px solid rgba(255,92,200,0.22);
-  box-shadow:0 0 12px rgba(233,30,140,0.10),0 4px 14px rgba(0,0,0,0.35),inset 0 1px 0 rgba(255,255,255,0.07);
-}
-.btn-dark:hover{background:rgba(255,255,255,0.08);box-shadow:0 0 22px rgba(233,30,140,0.22),0 6px 18px rgba(0,0,0,0.5);}
-
-.btn-visitor{
-  background:linear-gradient(135deg,rgba(255,92,200,0.12) 0%,rgba(255,255,255,0.06) 40%,rgba(233,30,140,0.18) 100%);
-  color:rgba(255,200,240,0.92);
-  border:1px solid rgba(255,120,210,0.35);
-  letter-spacing:0.08em;font-size:0.88rem;
-  box-shadow:0 0 14px rgba(233,30,140,0.18),0 4px 14px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.22);
-  overflow:hidden;
-}
-.btn-visitor::after{
-  content:'';position:absolute;
-  top:-60%;left:-75%;
-  width:55%;height:220%;
-  background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,0.22) 50%,transparent 70%);
-  transform:skewX(-18deg);
-  animation:btn-shimmer 3.2s ease-in-out infinite;
-  pointer-events:none;
-}
-@keyframes btn-shimmer{
-  0%  { left:-75%; opacity:0; }
-  10% { opacity:1; }
-  45% { left:130%; opacity:1; }
-  55% { left:130%; opacity:0; }
-  100%{ left:130%; opacity:0; }
-}
-.btn-visitor:hover{
-  background:linear-gradient(135deg,rgba(255,92,200,0.22) 0%,rgba(255,255,255,0.10) 40%,rgba(233,30,140,0.28) 100%);
-  box-shadow:0 0 24px rgba(233,30,140,0.35),0 6px 20px rgba(0,0,0,0.5);
-}
-.btn-ghost{
-  background:rgba(255,255,255,0.04);color:var(--text-2);
-  border:1px solid rgba(255,255,255,0.12);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.07);
-}
-.btn-full{width:100%;}
-.btn-lg{padding:0.85rem 1.5rem;font-size:1rem;}
-.btn-sm{padding:0.38rem 0.82rem;font-size:0.8rem;}
-
-/* ── FIX 1: Manita al lado DERECHO del botón visitante ── */
-.visitor-wrapper{
-  position:relative;
-  display:flex;
-  align-items:center;
-  gap:0.6rem;
-  justify-content:center;
-}
-.visitor-hand{
-  font-size:1.6rem;
-  display:inline-block;
-  animation:hand-bounce 0.7s ease-in-out infinite alternate;
-  filter:drop-shadow(0 0 8px rgba(255,92,200,0.7));
-  flex-shrink:0;
-  line-height:1;
-}
-@keyframes hand-bounce{
-  0%  { transform:translateX(0)    scale(1);   }
-  100%{ transform:translateX(-8px) scale(1.15); }
-}
-
-/* ── NAVBAR ── */
-#main-navbar{
-  display:none;position:sticky;top:0;z-index:150;
-  background:rgba(8,8,8,0.92);backdrop-filter:blur(22px);
-  border-bottom:1px solid var(--border-pk);
-  box-shadow:0 2px 24px rgba(0,0,0,0.7),0 0 40px rgba(233,30,140,0.05);
-  padding:0.65rem 1.3rem;
-  align-items:center;
-  justify-content:space-between;
-  gap:0.75rem;
-  flex-wrap:nowrap;
-}
-.navbar-brand{
-  display:flex;align-items:center;gap:0.6rem;font-family:'Playfair Display',serif;
-  font-size:1.1rem;font-weight:700;color:var(--pink-4);text-decoration:none;cursor:pointer;
-  font-style:italic;flex-shrink:0;
-}
-.navbar-right{
-  display:flex;align-items:center;gap:0.65rem;
-  flex-shrink:0;
-}
-.badge{font-size:0.66rem;font-weight:800;padding:0.2rem 0.6rem;border-radius:999px;letter-spacing:0.04em;text-transform:uppercase;}
-.badge-user   {background:rgba(233,30,140,0.18);color:var(--pink-4);border:1px solid var(--border-pk);}
-.badge-visitor{background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid var(--border);}
-
-/* ── FORM ── */
-.form-group{display:flex;flex-direction:column;gap:0.35rem;}
-label.field-label{font-size:0.83rem;font-weight:700;color:var(--text-2);}
-label.field-label.req::after{content:' *';color:var(--pink-4);}
-.form-input,.form-textarea{
-  width:100%;padding:0.65rem 0.9rem;
-  border:1.5px solid var(--border);border-radius:var(--radius-sm);
-  font-family:'Nunito',sans-serif;font-size:0.92rem;
-  color:var(--text);background:var(--dark-4);outline:none;
-  transition:border-color 0.2s,box-shadow 0.2s;
-}
-.form-input::placeholder,.form-textarea::placeholder{color:var(--muted);}
-.form-input:focus,.form-textarea:focus{
-  border-color:var(--pink-3);box-shadow:0 0 0 3px rgba(233,30,140,0.18);background:var(--dark-3);
-}
-.form-input:disabled{background:var(--dark-3);color:var(--muted);cursor:not-allowed;}
-.form-textarea{resize:vertical;min-height:90px;}
-.pass-wrap{position:relative;}
-.pass-wrap .form-input{padding-right:2.6rem;}
-.pass-eye{
-  position:absolute;right:0.7rem;top:50%;transform:translateY(-50%);
-  background:none;border:none;cursor:pointer;color:var(--muted);
-  display:flex;align-items:center;padding:0.2rem;transition:color 0.15s;
-}
-.pass-eye:hover{color:var(--pink-4);}
-
-/* ── DIVIDER ── */
-.divider{display:flex;align-items:center;gap:0.75rem;color:var(--muted);font-size:0.78rem;}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
-
-/* ── FIX 3: Insignia de Perfil Verificado ── */
-.verified-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:0.25rem;
-  background:rgba(34,197,94,0.15);
-  border:1px solid rgba(74,222,128,0.35);
-  border-radius:999px;
-  padding:0.18rem 0.55rem;
-  font-size:0.68rem;
-  font-weight:800;
-  color:#86efac;
-  letter-spacing:0.04em;
-  text-transform:uppercase;
-  backdrop-filter:blur(6px);
-  box-shadow:0 0 10px rgba(34,197,94,0.20);
-  vertical-align:middle;
-  margin-left:0.5rem;
-  flex-shrink:0;
-}
-.verified-badge svg{
-  width:11px;height:11px;
-  color:#4ade80;
-  filter:drop-shadow(0 0 4px rgba(74,222,128,0.6));
-}
-.card-name-row{
-  display:flex;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:0.1rem;
-  margin-bottom:0.35rem;
-}
-.detail-name-row{
-  display:flex;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:0.25rem;
-}
-
-/* ── PROFILE CARD ── */
-.profile-card{
-  background:linear-gradient(175deg,var(--dark-3) 0%,var(--dark-2) 100%);
-  border-radius:var(--radius);border:1px solid var(--border);
-  overflow:hidden;display:flex;flex-direction:column;
-  transition:transform 0.22s,box-shadow 0.22s,border-color 0.22s;
-  box-shadow:0 4px 20px rgba(0,0,0,0.4);
-  position:relative;user-select:none;
-}
-.profile-card:hover{
-  transform:translateY(-4px);
-  box-shadow:0 16px 48px rgba(0,0,0,0.6),0 0 0 1px var(--border-pk),0 0 30px rgba(233,30,140,0.10);
-  border-color:var(--border-pk);
-}
-
-.card-name-label{
-  font-size:0.72rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;
-  color:#ffb3e0;font-family:'Nunito',sans-serif;display:block;
-}
-.card-name-value{
-  font-size:1.35rem;font-family:'Playfair Display',serif;font-weight:700;font-style:italic;
-  color:#ffffff;
-  line-height:1.2;
-}
-
-/* ── SKELETON SHIMMER para fotos ── */
-.card-img-skeleton {
-  width:100%;height:270px;
-  background:linear-gradient(90deg, var(--dark-4) 25%, var(--dark-5) 50%, var(--dark-4) 75%);
-  background-size:200% 100%;
-  animation:skeleton-shimmer 1.6s infinite ease-in-out;
-  position:relative;
-  overflow:hidden;
-}
-@keyframes skeleton-shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position:-200% 0; }
-}
-.card-img-wrap{position:relative;overflow:hidden;cursor:pointer;}
-.card-img{
-  width:100%;height:270px;object-fit:cover;background:var(--dark-4);
-  display:block;transition:transform 0.3s ease, opacity 0.45s ease;
-  opacity:0;
-}
-.card-img.img-loaded{opacity:1;}
-.profile-card:hover .card-img{transform:scale(1.02);}
-.card-body{padding:1rem 1rem 0.75rem;flex:1;}
-.card-loc{font-size:0.74rem;color:var(--pink-4);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;}
-.card-age{font-size:0.82rem;color:var(--muted);margin-top:0.1rem;}
-.card-desc{
-  font-size:0.95rem;color:var(--text-2);margin-top:0.5rem;line-height:1.6;
-  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
-  word-break:break-word;
-}
-.card-footer{
-  padding:0.8rem 1rem;
-  background:linear-gradient(0deg,rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.1) 100%);
-  border-top:1px solid var(--border);
-  display:flex;flex-direction:column;gap:0.5rem;
-}
-.card-footer .row{display:flex;gap:0.5rem;}
-
-/* ── GRID ── */
-.profiles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.5rem;}
-
-/* ── IMAGE SLOTS ── */
-.main-img-preview{width:100%;height:220px;object-fit:cover;border-radius:var(--radius-sm);background:var(--dark-4);display:block;}
-.ref-slots{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;}
-.ref-slot{
-  border:2px dashed var(--border);border-radius:var(--radius-sm);height:95px;
-  display:flex;align-items:center;justify-content:center;cursor:pointer;
-  overflow:hidden;position:relative;transition:border-color 0.2s,background 0.15s;background:var(--dark-4);
-}
-.ref-slot:hover{border-color:var(--pink-3);background:rgba(233,30,140,0.06);}
-.slot-lbl{font-size:0.72rem;color:var(--muted);font-weight:700;display:flex;flex-direction:column;align-items:center;gap:0.3rem;}
-
-/* ── MODAL ── */
-#modal-overlay{
-  position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.78);
-  display:flex;align-items:center;justify-content:center;padding:1rem;
-  opacity:0;pointer-events:none;transition:opacity 0.22s;
-}
-#modal-overlay.show{opacity:1;pointer-events:all;}
-#modal-box{
-  background:linear-gradient(160deg,var(--dark-4) 0%,var(--dark-2) 100%);
-  border:1px solid var(--border-pk);border-radius:18px;
-  width:100%;max-width:400px;overflow:hidden;
-  box-shadow:0 32px 100px rgba(0,0,0,0.8),0 0 50px rgba(233,30,140,0.14);
-  transform:scale(0.87) translateY(12px);
-  transition:transform 0.25s cubic-bezier(.34,1.56,.64,1);
-}
-#modal-overlay.show #modal-box{transform:scale(1) translateY(0);}
-#modal-bar{padding:0.95rem 1.2rem 0.85rem;display:flex;align-items:center;gap:0.6rem;font-weight:800;font-size:0.95rem;color:#fff;position:relative;}
-#modal-bar::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.14) 0%,transparent 100%);pointer-events:none;}
-#modal-msg{padding:1rem 1.4rem 0.8rem;font-size:0.92rem;color:var(--text-2);line-height:1.65;}
-#modal-footer-btns{padding:0.6rem 1.2rem 1.2rem;display:flex;gap:0.55rem;justify-content:flex-end;flex-wrap:wrap;}
-
-/* ── SPINNER ── */
-.spinner{width:40px;height:40px;border-radius:50%;border:4px solid var(--dark-5);border-top-color:var(--pink-3);animation:spin 0.8s linear infinite;margin:0 auto;}
-@keyframes spin{to{transform:rotate(360deg);}}
-
-/* ── DETAIL ── */
-.detail-grid{display:grid;grid-template-columns:1fr;}
-@media(min-width:768px){.detail-grid{grid-template-columns:1fr 1fr;}}
-.detail-img{width:100%;height:430px;object-fit:cover;display:block;}
-.detail-body{padding:1.75rem;display:flex;flex-direction:column;gap:1.1rem;background:linear-gradient(175deg,var(--dark-3) 0%,var(--dark-2) 100%);}
-.detail-label{font-size:0.69rem;text-transform:uppercase;letter-spacing:0.09em;color:var(--pink-3);font-weight:800;}
-.detail-value{font-weight:700;color:var(--text);font-size:1rem;margin-top:0.15rem;}
-.detail-name{font-size:2rem;font-family:'Playfair Display',serif;font-weight:700;font-style:italic;color:#fff;line-height:1.2;}
-.detail-header-label{font-size:0.69rem;text-transform:uppercase;letter-spacing:0.09em;color:var(--pink-3);font-weight:800;text-align:left;}
-.detail-header-name{font-size:2rem;font-family:'Playfair Display',serif;font-weight:700;font-style:italic;color:#fff;line-height:1.2;text-align:left;}
-.detail-desc{font-size:0.93rem;color:var(--text-2);line-height:1.72;margin-top:0.25rem;white-space:pre-wrap;word-break:break-word;}
-.detail-phone{font-size:1.4rem;font-weight:900;color:#e88ec4;text-decoration:none;text-shadow:0 0 14px rgba(232,142,196,0.35);transition:color 0.2s;}
-.detail-phone:hover{color:#ffb3de;}
-.ref-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;}
-.ref-grid img{width:100%;height:105px;object-fit:cover;border-radius:9px;cursor:pointer;transition:transform 0.18s,box-shadow 0.18s;border:2px solid transparent;}
-.ref-grid img:hover{transform:scale(1.04);box-shadow:0 0 0 2px var(--pink-4),0 6px 18px rgba(233,30,140,0.35);}
-
-/* ── LIGHTBOX ── */
-#lightbox{
-  position:fixed;inset:0;z-index:99999;
-  background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);
-  display:flex;align-items:center;justify-content:center;
-  opacity:0;pointer-events:none;transition:opacity 0.22s;
-  padding:0;
-}
-#lightbox.show{opacity:1;pointer-events:all;}
-#lightbox-img{
-  max-width:76vw;max-height:85vh;border-radius:12px;
-  box-shadow:0 20px 80px rgba(0,0,0,0.9),0 0 60px rgba(233,30,140,0.15);
-  transform:scale(0.88);transition:transform 0.26s cubic-bezier(.34,1.46,.64,1);
-  object-fit:contain;
-}
-#lightbox.show #lightbox-img{transform:scale(1);}
-#lightbox-close{
-  position:fixed;top:1.1rem;right:1.1rem;
-  width:42px;height:42px;border-radius:50%;
-  background:rgba(233,30,140,0.35);backdrop-filter:blur(8px);
-  border:1px solid rgba(255,92,200,0.4);
-  color:#ffb3e0;font-size:1.3rem;font-weight:700;
-  display:flex;align-items:center;justify-content:center;cursor:pointer;
-  box-shadow:0 0 20px rgba(233,30,140,0.35);
-  transition:background 0.15s,transform 0.15s;line-height:1;
-  z-index:100001;
-}
-#lightbox-close:hover{background:rgba(233,30,140,0.55);transform:scale(1.1);}
-.lb-nav{
-  position:fixed;top:50%;transform:translateY(-50%);
-  width:48px;height:56px;
-  background:rgba(233,30,140,0.28);backdrop-filter:blur(8px);
-  border:1px solid rgba(255,92,200,0.35);
-  color:#ffb3e0;font-size:1.6rem;font-weight:700;
-  display:flex;align-items:center;justify-content:center;cursor:pointer;
-  box-shadow:0 0 18px rgba(233,30,140,0.25);
-  transition:background 0.15s,transform 0.15s;
-  z-index:100001;user-select:none;line-height:1;
-}
-.lb-nav:hover{background:rgba(233,30,140,0.55);}
-.lb-nav.hidden{opacity:0;pointer-events:none;}
-#lb-prev{left:0;border-radius:0 10px 10px 0;}
-#lb-prev:hover{transform:translateY(-50%) translateX(3px);}
-#lb-next{right:0;border-radius:10px 0 0 10px;}
-#lb-next:hover{transform:translateY(-50%) translateX(-3px);}
-
-/* ── AUTH ── */
-.auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;position:relative;z-index:1;}
-.auth-card{
-  width:100%;max-width:385px;
-  background:linear-gradient(170deg,var(--dark-3) 0%,var(--dark-2) 100%);
-  border:1px solid var(--border-pk);border-radius:var(--radius);
-  box-shadow:0 24px 70px rgba(0,0,0,0.7),0 0 70px rgba(233,30,140,0.08);
-}
-.auth-card .inner{padding:2.2rem 2rem;}
-.auth-logo{
-  width:78px;height:78px;border-radius:22px;
-  background:linear-gradient(145deg,rgba(255,92,200,0.35) 0%,rgba(233,30,140,0.50) 50%,rgba(194,24,91,0.55) 100%);
-  display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;
-  box-shadow:0 0 30px rgba(233,30,140,0.40),0 8px 24px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.20);
-  position:relative;overflow:hidden;border:1px solid rgba(255,92,200,0.35);
-}
-.auth-logo::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.18) 0%,transparent 55%);pointer-events:none;}
-.auth-title{text-align:center;margin-bottom:0.2rem;font-size:1.65rem;color:#fff;font-style:italic;}
-.auth-sub{text-align:center;font-size:0.83rem;color:var(--muted);margin-bottom:1.8rem;font-weight:600;letter-spacing:0.04em;}
-.auth-fields{display:flex;flex-direction:column;gap:1rem;}
-.link-btn{background:none;border:none;cursor:pointer;color:var(--pink-4);font-size:0.82rem;font-weight:700;text-decoration:underline;font-family:'Nunito',sans-serif;padding:0;transition:color 0.15s;}
-.link-btn:hover{color:#fff;}
-.back-btn{display:inline-flex;align-items:center;gap:0.35rem;color:var(--pink-4);font-weight:800;font-size:0.9rem;background:none;border:none;cursor:pointer;margin-bottom:1.1rem;padding:0;transition:color 0.15s;font-family:'Nunito',sans-serif;}
-.back-btn:hover{color:#fff;}
-.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:0.75rem;}
-.page-title{font-size:1.75rem;color:#fff;font-style:italic;}
-.page-title span{color:var(--pink-4);}
-.state-box{text-align:center;padding:4rem 1rem;color:var(--muted);font-weight:700;}
-.state-box p{margin-top:0.75rem;font-size:0.95rem;}
-
-/* ── Terms modal overlay ── */
-#terms-overlay{
-  position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.82);
-  display:flex;align-items:flex-end;justify-content:center;
-  opacity:0;pointer-events:none;transition:opacity 0.25s;padding:0;
-}
-#terms-overlay.show{opacity:1;pointer-events:all;}
-#terms-box{
-  background:linear-gradient(170deg,var(--dark-3) 0%,var(--dark-2) 100%);
-  border:1px solid var(--border-pk);border-radius:22px 22px 0 0;
-  width:100%;max-width:640px;max-height:88vh;overflow-y:auto;
-  padding:1.8rem 1.5rem 2.5rem;
-  transform:translateY(100%);
-  transition:transform 0.32s cubic-bezier(.34,1.2,.64,1);
-  box-shadow:0 -20px 60px rgba(0,0,0,0.7),0 0 40px rgba(233,30,140,0.08);
-}
-#terms-overlay.show #terms-box{transform:translateY(0);}
-.terms-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-style:italic;color:#fff;margin-bottom:0.35rem;display:flex;align-items:center;gap:0.6rem;}
-.terms-body{font-size:0.88rem;color:var(--text-2);line-height:1.78;display:flex;flex-direction:column;gap:1rem;}
-.terms-body h3{font-size:0.82rem;font-weight:800;letter-spacing:0.07em;text-transform:uppercase;color:var(--pink-4);margin-bottom:-0.4rem;}
-.shield-btn{
-  background:none;border:none;cursor:pointer;
-  display:inline-flex;align-items:center;gap:0.4rem;
-  color:var(--text-2);font-size:0.8rem;font-weight:700;font-family:'Nunito',sans-serif;
-  padding:0.3rem 0.6rem;border-radius:var(--radius-sm);
-  transition:color 0.15s,background 0.15s;border:1px solid var(--border);
-}
-.shield-btn:hover{color:var(--pink-4);background:rgba(233,30,140,0.08);border-color:var(--border-pk);}
-.form-section{background:linear-gradient(170deg,var(--dark-3) 0%,var(--dark-2) 100%);border-radius:var(--radius);border:1px solid var(--border);padding:1.75rem;box-shadow:var(--shadow);}
-.form-section-title{font-size:1.5rem;color:var(--pink-4);font-style:italic;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
-
-/* ══════════════════════════════════════════════════
-   CONTADOR DE VISITANTES — barra fija al fondo
-══════════════════════════════════════════════════ */
-#visitor-counter{
-  position:fixed;
-  bottom:0;left:0;right:0;
-  z-index:200;
-  /* gradiente de abajo: fondo oscuro semitransparente */
-  background:linear-gradient(0deg,rgba(8,0,6,0.97) 0%,rgba(14,0,10,0.88) 100%);
-  border-top:1px solid rgba(233,30,140,0.35);
-  box-shadow:0 -4px 32px rgba(233,30,140,0.18),0 -1px 0 rgba(233,30,140,0.12);
-  backdrop-filter:blur(18px);
-  padding:0.55rem 1.2rem;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:0.8rem;
-  /* oculto al inicio, aparece con animación */
-  opacity:0;
-  transform:translateY(100%);
-  transition:opacity 0.5s ease, transform 0.5s cubic-bezier(.34,1.2,.64,1);
-}
-#visitor-counter.vc-show{
-  opacity:1;
-  transform:translateY(0);
-}
-
-/* Pulso de punto verde "en vivo" */
-.vc-dot{
-  width:9px;height:9px;border-radius:50%;
-  background:#ff5cc8;
-  box-shadow:0 0 0 0 rgba(255,92,200,0.6);
-  animation:vc-pulse 1.8s ease-out infinite;
-  flex-shrink:0;
-}
-@keyframes vc-pulse{
-  0%  { box-shadow:0 0 0 0   rgba(255,92,200,0.7); }
-  60% { box-shadow:0 0 0 9px rgba(255,92,200,0);   }
-  100%{ box-shadow:0 0 0 0   rgba(255,92,200,0);   }
-}
-
-.vc-label{
-  font-size:0.72rem;font-weight:800;letter-spacing:0.13em;
-  text-transform:uppercase;color:var(--muted);
-  white-space:nowrap;
-}
-
-.vc-number{
-  font-family:'Playfair Display',serif;
-  font-size:1.65rem;font-weight:700;font-style:italic;
-  color:#fff;
-  text-shadow:0 0 18px rgba(255,92,200,0.7),0 0 40px rgba(233,30,140,0.5);
-  line-height:1;
-  /* número animado */
-  transition:color 0.3s;
-}
-/* partículas de brillo alrededor del número */
-.vc-glow{
-  position:relative;display:inline-block;
-}
-.vc-glow::before{
-  content:'';
-  position:absolute;inset:-6px;
-  background:radial-gradient(ellipse at center,rgba(255,92,200,0.22) 0%,transparent 70%);
-  border-radius:50%;
-  pointer-events:none;
-  animation:vc-glow-pulse 2.4s ease-in-out infinite alternate;
-}
-@keyframes vc-glow-pulse{
-  0%  { opacity:0.5; transform:scale(0.95); }
-  100%{ opacity:1.0; transform:scale(1.05); }
-}
-
-.vc-suffix{
-  font-size:0.7rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--pink-4);
-  text-shadow:0 0 10px rgba(255,92,200,0.5);
-  white-space:nowrap;
-}
-
-/* separador vertical decorativo */
-.vc-sep{
-  width:1px;height:28px;
-  background:linear-gradient(180deg,transparent,rgba(255,92,200,0.4),transparent);
-  flex-shrink:0;
-}
-
-/* ── Padding extra al fondo del screen-list para que el contador no tape contenido ── */
-#screen-list > div {
-  padding-bottom: 4rem;
-}
-</style>
+<!-- OPTIMIZACIÓN 4: defer en el SDK de Supabase: deja de bloquear el
+     parseo del HTML; el script se ejecuta cuando el DOM ya está listo -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 </head>
 <body>
 
@@ -639,7 +56,7 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
     <div class="auth-card">
       <div class="inner">
         <div class="auth-logo" style="width:130px;height:130px;border-radius:28px;padding:0;overflow:hidden;background:transparent;box-shadow:0 0 36px rgba(233,30,140,0.45),0 10px 28px rgba(0,0,0,0.55);border:1px solid rgba(255,92,200,0.38);">
-          <img src="logoperfilesapp.png" alt="Logo" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:28px;">
+          <img src="logoperfilesapp.png" alt="Logo" width="130" height="130" fetchpriority="high" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:28px;">
         </div>
         <h1 class="auth-title" style="font-size:1.85rem">E-legirs</h1>
         <p class="auth-sub">Directorio de Perfiles</p>
@@ -913,14 +330,22 @@ label.field-label.req::after{content:' *';color:var(--pink-4);}
 const SUPABASE_URL      = 'https://zvtfwavhfeqrnfzwrain.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2dGZ3YXZoZmVxcm5mendyYWluIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDc2MzY3MSwiZXhwIjoyMDkwMzM5NjcxfQ.wLBM9OOMmXGVC-2rI-JeO_58SAn_R0kGu2GZPCqyWmE';
 
+/* ────────────────────────────────────────────────
+   OPTIMIZACIÓN 5: como supabase-js ahora carga con
+   "defer", esperamos a window 'load' / DOMContentLoaded
+   antes de crear el cliente, para no fallar si el
+   script externo aún no terminó de cargar.
+──────────────────────────────────────────────── */
 let sb = null;
-try {
-  if (!SUPABASE_URL.startsWith('AQUI')) {
-    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: { persistSession: true, storageKey: 'leon-gto-session' }
-    });
-  }
-} catch(e) { console.warn('Supabase:', e); }
+function initSupabaseClient() {
+  try {
+    if (window.supabase && !SUPABASE_URL.startsWith('AQUI')) {
+      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: { persistSession: true, storageKey: 'leon-gto-session' }
+      });
+    }
+  } catch(e) { console.warn('Supabase:', e); }
+}
 
 let currentUser = null, isVisitor = false, profilesData = [], editingId = null;
 const $ = id => document.getElementById(id);
@@ -933,33 +358,26 @@ const RX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const STORAGE_KEY = 'elegirs_visitor_num';
   const MIN = 1700, MAX = 2500;
 
-  // Si ya existe un número guardado en esta sesión, reutilizarlo
-  // (para que no cambie al refrescar en la misma sesión)
   let num = sessionStorage.getItem(STORAGE_KEY);
   if (!num) {
-    // Número base aleatorio entre MIN y MAX
     num = Math.floor(Math.random() * (MAX - MIN + 1)) + MIN;
     sessionStorage.setItem(STORAGE_KEY, num);
   } else {
     num = parseInt(num);
   }
 
-  // Animación de conteo desde 0 hasta el número objetivo
   const el = document.getElementById('vc-num');
   const counter = document.getElementById('visitor-counter');
 
-  // Mostrar el contador después de un pequeño delay
   setTimeout(() => {
     counter.classList.add('vc-show');
-    // Animar el número contando hacia arriba
-    const duration = 1800; // ms
+    const duration = 1800;
     const start    = performance.now();
-    const startVal = Math.max(0, num - Math.floor(num * 0.12)); // empieza desde ~88% del número
+    const startVal = Math.max(0, num - Math.floor(num * 0.12));
 
     function tick(now) {
       const elapsed  = now - start;
       const progress = Math.min(elapsed / duration, 1);
-      // Easing: ease-out cúbico
       const eased    = 1 - Math.pow(1 - progress, 3);
       const current  = Math.floor(startVal + (num - startVal) * eased);
       el.textContent = current.toLocaleString('es-MX');
@@ -976,17 +394,14 @@ const RX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
    - IntersectionObserver con rootMargin generoso
    - Retry automático con backoff si falla (hasta 3 intentos)
    - Fallback elegante sin texto "foto no disponible"
+   - decoding=async + loading=lazy en el <img> base
 ══════════════════════════════════════════════════ */
 const PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='270' viewBox='0 0 400 270'%3E%3Crect width='400' height='270' fill='%231c1c1c'/%3E%3Ccircle cx='200' cy='110' r='30' fill='%23303030'/%3E%3Cellipse cx='200' cy='190' rx='55' ry='35' fill='%23303030'/%3E%3C/svg%3E";
 
-// Convierte la URL de Supabase Storage para añadir parámetros de caché busting
-// y evitar imágenes cortadas por timeouts de CDN
 function buildImgUrl(src) {
   if (!src || src.startsWith('data:')) return src;
   try {
     const url = new URL(src);
-    // Añadir transform de Supabase Image para optimizar tamaño en cards
-    // width=400 suficiente para grid de 270px, quality=75 reduce peso
     if (url.hostname.includes('supabase')) {
       url.searchParams.set('width',  '400');
       url.searchParams.set('quality','80');
@@ -998,10 +413,9 @@ function buildImgUrl(src) {
   }
 }
 
-// Carga una imagen con reintentos automáticos
 function loadImgWithRetry(imgEl, src, maxRetries = 3) {
   let attempt = 0;
-  const skelEl = imgEl.previousElementSibling; // el div skeleton
+  const skelEl = imgEl.previousElementSibling;
 
   function tryLoad() {
     const probe = new Image();
@@ -1015,10 +429,8 @@ function loadImgWithRetry(imgEl, src, maxRetries = 3) {
     probe.onerror = () => {
       attempt++;
       if (attempt < maxRetries) {
-        // Backoff: 600ms, 1400ms, 2800ms
         setTimeout(tryLoad, 600 * Math.pow(2, attempt - 1));
       } else {
-        // Fallback: mostrar silueta, no texto de error
         imgEl.src = PLACEHOLDER;
         imgEl.classList.add('img-loaded');
         if (skelEl && skelEl.classList.contains('card-img-skeleton')) {
@@ -1026,12 +438,15 @@ function loadImgWithRetry(imgEl, src, maxRetries = 3) {
         }
       }
     };
-    probe.src = src + (src.includes('?') ? '&' : '?') + '_t=' + Date.now();
+    /* OPTIMIZACIÓN 6: ya no se rompe el caché del navegador con
+       _t=Date.now() en cada intento. El cache-busting solo aplica
+       en reintentos reales (attempt>0); la primera carga aprovecha
+       el caché HTTP/CDN de Supabase normalmente. */
+    probe.src = attempt > 0 ? (src + (src.includes('?') ? '&' : '?') + '_retry=' + attempt) : src;
   }
   tryLoad();
 }
 
-// IntersectionObserver mejorado: rootMargin 500px para pre-cargar antes de ver
 const imgObserver = typeof IntersectionObserver !== 'undefined'
   ? new IntersectionObserver((entries) => {
       entries.forEach(e => {
@@ -1055,15 +470,14 @@ function observeLazy() {
   });
 }
 
-// Genera HTML de imagen con skeleton debajo
 function cardImgHtml(src, name) {
   const optimizedSrc = src && !src.startsWith('data:') ? src : null;
   if (!optimizedSrc) {
     return `<div class="card-img-skeleton" style="display:none"></div>
-            <img class="card-img img-loaded" src="${PLACEHOLDER}" alt="${name}">`;
+            <img class="card-img img-loaded" src="${PLACEHOLDER}" alt="${name}" width="400" height="270" decoding="async">`;
   }
   return `<div class="card-img-skeleton"></div>
-          <img class="card-img" data-lazy-src="${optimizedSrc}" src="${PLACEHOLDER}" alt="${name}">`;
+          <img class="card-img" data-lazy-src="${optimizedSrc}" src="${PLACEHOLDER}" alt="${name}" width="400" height="270" loading="lazy" decoding="async">`;
 }
 
 /* ── Eye Toggle ── */
@@ -1102,7 +516,6 @@ function modal(type, msg, btns) {
   $('modal-overlay').classList.add('show');
 }
 function closeModal() { $('modal-overlay').classList.remove('show'); }
-$('modal-overlay').addEventListener('click', e => { if (e.target === $('modal-overlay')) closeModal(); });
 
 /* ── LIGHTBOX ── */
 let lbPhotos = [], lbIndex = 0;
@@ -1143,10 +556,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft')  lbNavigate(-1);
   if (e.key === 'ArrowRight') lbNavigate(1);
 });
-document.addEventListener('DOMContentLoaded', () => {
-  const img = $('lightbox-img');
-  if (img) img.style.transition = 'opacity 0.14s ease, transform 0.26s cubic-bezier(.34,1.46,.64,1)';
-});
 
 /* ── NAVEGACIÓN CON HISTORY API ── */
 let currentScreen = null;
@@ -1166,7 +575,6 @@ function _applyScreen(screenId) {
   $(screenId).classList.add('active');
   const isAuth = screenId === 'screen-login' || screenId === 'screen-register';
   $('main-navbar').style.display = isAuth ? 'none' : 'flex';
-  // Mostrar/ocultar el contador solo en la pantalla de lista
   const vc = $('visitor-counter');
   if (vc) vc.style.display = (screenId === 'screen-list') ? 'flex' : 'none';
   if (screenId === 'screen-list') loadProfiles();
@@ -1188,7 +596,6 @@ window.addEventListener('popstate', (e) => {
     navigate(dest, true); return;
   }
   if (targetScreen === 'screen-login' && (currentUser || isVisitor)) {
-    // Tiene sesión o es visitante: no mandar al login; salir de la app normalmente
     history.back(); return;
   }
   currentScreen = targetScreen;
@@ -1198,19 +605,16 @@ window.addEventListener('popstate', (e) => {
 /* ── Navbar ── */
 function updateNav() {
   if (currentUser) {
-    // Usuario autenticado: mostrar New + Salir
     $('nav-new-btn').style.display      = 'inline-flex';
     $('nav-logout-btn').style.display   = 'inline-flex';
     $('nav-register-btn').style.display = 'none';
     $('nav-login-btn').style.display    = 'none';
   } else if (isVisitor) {
-    // Visitante: mostrar Registrarme + Iniciar Sesión
     $('nav-new-btn').style.display      = 'none';
     $('nav-logout-btn').style.display   = 'none';
     $('nav-register-btn').style.display = 'inline-flex';
     $('nav-login-btn').style.display    = 'inline-flex';
   } else {
-    // Sin sesión en pantallas que muestran navbar
     $('nav-new-btn').style.display      = 'none';
     $('nav-logout-btn').style.display   = 'none';
     $('nav-register-btn').style.display = 'none';
@@ -1316,6 +720,8 @@ async function loadProfiles(forceRefresh = false) {
     $('list-empty-msg').textContent='Configura Supabase para ver los perfiles.'; return;
   }
   try {
+    /* OPTIMIZACIÓN 7: traer solo columnas usadas en la card/listado
+       (ya estaba bien acotado, se mantiene tal cual). */
     const { data, error } = await sb.from('profiles')
       .select('id,user_id,name,age,location,description,phone,prices,main_photo_url,ref_photo_1_url,ref_photo_2_url,ref_photo_3_url,created_at')
       .order('location',{ascending:true}).order('name',{ascending:true});
@@ -1393,7 +799,7 @@ function viewProfile(id) {
 
   $('detail-content').innerHTML = `
     <div style="background:linear-gradient(175deg,var(--dark-3) 0%,var(--dark-2) 100%);">
-      <img src="${imgSrc}" class="detail-img" alt="${p.name}" loading="lazy"
+      <img src="${imgSrc}" class="detail-img" alt="${p.name}" loading="lazy" decoding="async"
         style="width:100%;height:420px;object-fit:cover;display:block;cursor:pointer"
         onclick="openLightbox('${imgSrc}', JSON.parse(this.dataset.photos))"
         data-photos="${photosJson}" onerror="this.src='${PLACEHOLDER}'">
@@ -1401,7 +807,7 @@ function viewProfile(id) {
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;padding:0.75rem 1rem 0">
         ${refs.map(src => `<img src="${src}" data-photos="${photosJson}" alt="ref"
           style="width:100%;height:110px;object-fit:cover;border-radius:9px;cursor:pointer;transition:transform 0.18s,box-shadow 0.18s;border:2px solid transparent;"
-          loading="lazy"
+          loading="lazy" decoding="async"
           onclick="openLightbox('${src}', JSON.parse(this.dataset.photos))"
           onmouseover="this.style.transform='scale(1.04)';this.style.boxShadow='0 0 0 2px #ff5cc8,0 6px 18px rgba(233,30,140,0.35)'"
           onmouseout="this.style.transform='';this.style.boxShadow=''"
@@ -1526,10 +932,19 @@ async function saveProfile() {
     let mainUrl = existing?.main_photo_url || '', ref1Url = existing?.ref_photo_1_url || '';
     let ref2Url = existing?.ref_photo_2_url || '', ref3Url = existing?.ref_photo_3_url || '';
 
-    if (mainFile) mainUrl = await uploadFile(mainFile, `main/${currentUser.id}`);
-    const r1 = $('f-ref1').files[0]; if (r1) ref1Url = await uploadFile(r1, `ref/${currentUser.id}`);
-    const r2 = $('f-ref2').files[0]; if (r2) ref2Url = await uploadFile(r2, `ref/${currentUser.id}`);
-    const r3 = $('f-ref3').files[0]; if (r3) ref3Url = await uploadFile(r3, `ref/${currentUser.id}`);
+    /* OPTIMIZACIÓN 8: subir las fotos de referencia en paralelo
+       en vez de una por una (await secuencial). Reduce el tiempo
+       total de guardado cuando hay varias fotos nuevas. */
+    const [mainResult, r1Result, r2Result, r3Result] = await Promise.all([
+      mainFile ? uploadFile(mainFile, `main/${currentUser.id}`) : Promise.resolve(null),
+      $('f-ref1').files[0] ? uploadFile($('f-ref1').files[0], `ref/${currentUser.id}`) : Promise.resolve(null),
+      $('f-ref2').files[0] ? uploadFile($('f-ref2').files[0], `ref/${currentUser.id}`) : Promise.resolve(null),
+      $('f-ref3').files[0] ? uploadFile($('f-ref3').files[0], `ref/${currentUser.id}`) : Promise.resolve(null),
+    ]);
+    if (mainResult) mainUrl = mainResult;
+    if (r1Result)   ref1Url = r1Result;
+    if (r2Result)   ref2Url = r2Result;
+    if (r3Result)   ref3Url = r3Result;
 
     let dbError;
     if (editingId) {
@@ -1620,7 +1035,8 @@ function closeTerms() { document.getElementById('terms-overlay').classList.remov
 
 /* ── Init — SIEMPRE arranca en los perfiles ── */
 async function init() {
-  // Ocultar contador hasta que esté en screen-list
+  initSupabaseClient();
+
   const vc = $('visitor-counter');
   if (vc) vc.style.display = 'none';
 
@@ -1637,15 +1053,23 @@ async function init() {
     } catch(e) { console.warn('Session check error:', e); }
   }
 
-  // Sin sesión activa → entrar como visitante automáticamente
-  // (el login solo se accede desde "Iniciar Sesión" en el navbar)
   currentUser = null;
   isVisitor   = true;
   updateNav();
   navigate('screen-list', true);
 }
 
-window.onload = init;
+/* OPTIMIZACIÓN 9: como el script de Supabase ahora carga con "defer",
+   esperamos a 'DOMContentLoaded' en vez de 'window.onload', así la app
+   arranca apenas el HTML está listo, sin esperar imágenes/fuentes. */
+document.addEventListener('DOMContentLoaded', init);
+
+/* Listener del modal, movido aquí porque ya existe el DOM */
+document.addEventListener('DOMContentLoaded', () => {
+  $('modal-overlay').addEventListener('click', e => { if (e.target === $('modal-overlay')) closeModal(); });
+  const img = $('lightbox-img');
+  if (img) img.style.transition = 'opacity 0.14s ease, transform 0.26s cubic-bezier(.34,1.46,.64,1)';
+});
 </script>
 </body>
 </html>
