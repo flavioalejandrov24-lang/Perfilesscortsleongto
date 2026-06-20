@@ -46,7 +46,7 @@
     <button id="nav-new-btn"      class="btn btn-pink btn-sm"  onclick="openNewProfile()"            style="display:none">+ New</button>
     <button id="nav-logout-btn"   class="btn btn-red btn-sm"   onclick="handleLogout()"               style="display:none">Salir</button>
     <button id="nav-register-btn" class="btn btn-blue btn-sm"  onclick="navigate('screen-register')"  style="display:none">Registrarme</button>
-    <button id="nav-login-btn"    class="btn btn-ghost btn-sm" onclick="navigate('screen-login')"      style="display:none">Iniciar Sesión</button>
+    <button id="nav-login-btn"    class="btn btn-login btn-sm" onclick="navigate('screen-login')"      style="display:none">Iniciar Sesión</button>
   </div>
 </nav>
 
@@ -698,7 +698,7 @@ function handleLogout() {
       _applyScreen('screen-login');
       currentScreen = 'screen-login';
     }},
-    {text:'Cancelar',cls:'btn-blue',cb:closeModal}
+    {text:'Cancelar',cls:'btn-red',cb:closeModal}
   ]);
 }
 
@@ -853,7 +853,7 @@ function openPrices(profileId) {
       'Para ver los precios de servicios necesitas tener una cuenta e iniciar sesión.',
       [
         { text:'Ingresar', cls:'btn-green', cb:()=>{ closeModal(); navigate('screen-login'); } },
-        { text:'Cancelar', cls:'btn-blue',  cb:closeModal }
+        { text:'Cancelar', cls:'btn-red',  cb:closeModal }
       ]
     );
     return;
@@ -985,7 +985,7 @@ async function uploadFile(file, folder) {
 function confirmDelete(id) {
   modal('confirm','¿Eliminar este perfil? Esta acción es permanente.',[
     {text:'Sí, eliminar',cls:'btn-red', cb:()=>{closeModal();doDelete(id);}},
-    {text:'Cancelar',    cls:'btn-blue',cb:closeModal}
+    {text:'Cancelar',    cls:'btn-red',cb:closeModal}
   ]);
 }
 async function doDelete(id) {
