@@ -442,25 +442,36 @@ function loadImgWithRetry(imgEl, src, maxRetries = 3) {
   tryLoad();
 }
 
+/* FIX: antes se observaba el <img>, pero el skeleton lo empujaba fuera del
+   contenedor (overflow:hidden) y el IntersectionObserver lo consideraba
+   "invisible" → la foto nunca se pedía. Ahora se observa el contenedor
+   (.card-img-wrap), que siempre es visible, y el skeleton va encima (absolute). */
 const imgObserver = typeof IntersectionObserver !== 'undefined'
   ? new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (!e.isIntersecting) return;
-        const img = e.target;
-        const src = img.dataset.lazySrc;
-        if (!src) return;
-        imgObserver.unobserve(img);
-        loadImgWithRetry(img, buildImgUrl(src));
+        const wrap = e.target;
+        imgObserver.unobserve(wrap);
+        const img = wrap.querySelector('img[data-lazy-src]');
+        if (!img || img.dataset.started) return;
+        img.dataset.started = '1';
+        loadImgWithRetry(img, buildImgUrl(img.dataset.lazySrc));
       });
     }, { rootMargin: '700px 0px', threshold: 0 })
   : null;
 
 function observeLazy() {
-  if (!imgObserver) return;
-  document.querySelectorAll('img[data-lazy-src]').forEach(img => {
-    if (!img.dataset.observed) {
-      imgObserver.observe(img);
-      img.dataset.observed = '1';
+  const imgs = document.querySelectorAll('img[data-lazy-src]');
+  imgs.forEach((img, i) => {
+    if (img.dataset.observed) return;
+    img.dataset.observed = '1';
+    // Las primeras 6 fotos (lo que se ve al abrir) se cargan de inmediato.
+    // El resto, o si el navegador no soporta IntersectionObserver, por scroll.
+    if (i < 6 || !imgObserver) {
+      img.dataset.started = '1';
+      loadImgWithRetry(img, buildImgUrl(img.dataset.lazySrc));
+    } else {
+      imgObserver.observe(img.closest('.card-img-wrap') || img);
     }
   });
 }
@@ -472,7 +483,7 @@ function cardImgHtml(src, name) {
             <img class="card-img img-loaded" src="${PLACEHOLDER}" alt="${name}" width="400" height="270" decoding="async">`;
   }
   return `<div class="card-img-skeleton"></div>
-          <img class="card-img" data-lazy-src="${optimizedSrc}" src="${PLACEHOLDER}" alt="${name}" width="400" height="270" loading="lazy" decoding="async">`;
+          <img class="card-img" data-lazy-src="${optimizedSrc}" src="${PLACEHOLDER}" alt="${name}" width="400" height="270" decoding="async">`;
 }
 
 /* ── Eye Toggle ── */
